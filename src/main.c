@@ -157,11 +157,11 @@ DDS_Sweep(void *p_arg)
 	CPU_FP64 step;
 	CPU_FP64 frequency_temp;
 	CPU_INT32U num_temp;
-	CPU_INT32U result[NumberOfPoints];
+	CPU_INT32U result;
 	OS_ERR err;
 	CPU_TS ts;
 	CPU_INT32U count_temp;
-	CPU_CHAR s[10];
+	CPU_CHAR s[20];
 
 #ifdef DEBUG_FREQUENCY_SWEEP
 	StartFre = 0;
@@ -184,24 +184,21 @@ DDS_Sweep(void *p_arg)
 
 		while (num_temp <= NumberOfPoints)
 		{
-			AD9850_WriteCmd(0,frequency_temp+step*num_temp);
+			AD9850_WriteCmd(0,frequency_temp);
+			result = 0;
+			for (int i=0;i<30;i++)
+			{
+				result +=ADC_converted_value;
+				delay(10);
+			}
 
-//			delay(1000);
-
-			result[num_temp]=ADC_converted_value;
-
-			sprintf(s, "%d\n", ADC_converted_value);
+			sprintf(s, "%f %d\n",frequency_temp, result/30);
 			USART2_puts(s);
-
-//			USART_SendData(USART2,(CPU_INT08U)ADC_converted_value&0xFF);
-//			while (USART_GetFlagStatus(USART2, USART_FLAG_TXE)==RESET);
-//			USART_SendData(USART2,(CPU_INT08U)(ADC_converted_value>>8)&0xFF);
-//			while (USART_GetFlagStatus(USART2, USART_FLAG_TXE)==RESET);
 
 #ifdef TEST_CASE1_ADC
 			AD9850_WriteCmd(0,100000);
 #endif
-//			frequency_temp+=step;
+			frequency_temp+=step;
 			num_temp++;
 		}
 #ifdef DEBUG_ADC
@@ -334,7 +331,7 @@ DDS_ADC_configuration(void)
 	  ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
 	  ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
 	  ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
-	  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
+	  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_15Cycles;
 	  ADC_CommonInit(&ADC_CommonInitStructure);
 
 	  /* ADC3 Init ****************************************************************/
