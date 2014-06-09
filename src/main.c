@@ -1,5 +1,6 @@
 #include "stm32f4xx.h"
 #include "includes.h"
+#include "motor.h"
 #include "app_cfg.h"
 #include <stdio.h>
 
@@ -140,6 +141,9 @@ main(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
 
+  motor_init();
+  motor_sleep();
+
   OSStart(&err);
 
 }
@@ -147,14 +151,14 @@ main(void)
 void
 ledbling(void *p_arg)
 {
-
-
 	while (1)
 	  {
 	    GPIO_ResetBits(BLINK_PORT, (1 << BLINK_PIN));
 	    Delay(BLINK_TICKS);
 	    GPIO_SetBits(BLINK_PORT, (1 << BLINK_PIN));
 	    Delay(BLINK_TICKS);
+	    motor_step_backward(500);
+	    motor_step_forward(500);
 	  }
 }
 

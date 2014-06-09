@@ -21,6 +21,9 @@
 #define MOTOR_DIR		GPIO_Pin_3
 #define MOTOR_WAKEUP	GPIO_Pin_5
 #define MOTOR_SQUARE	GPIO_Pin_7
+
+void motor_init();
+
 /*=============End 管脚定义================*/
 
 /*
@@ -29,18 +32,21 @@
  * 以下接口用于底层驱动与A3967芯片交互。若芯片不同则需要修改具体实现。
  */
 
+void motor_IC_forward_one_step();
+void motor_IC_backward_one_step();
+void motor_sleep();
+
 /*==============End 底层驱动=================*/
 
 
-void motor_init();
-void motor_sleep();
-void motor_origin_set();
 void motor_auto_forward();
 void motor_auto_backward();
 void motor_stop();
 void motor_step_forward(int step);
 void motor_step_backward(int step);
+
 void motor_originate();
+void motor_origin_set();
 
 /*
  * 标准单步长

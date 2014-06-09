@@ -19,6 +19,34 @@ void motor_sleep()
 	MOTOR_PORT_s->BSRRL=0x0030;
 }
 
+void motor_IC_forward_one_step()
+{
+	static unsigned char i = 0;
+	MOTOR_PORT_s->BSRRH = 0x0090;
+	if (i%2)
+	{
+		MOTOR_PORT_s->BSRRL = 0x0080;
+	}
+	else
+	{
+		MOTOR_PORT_s->BSRRH = 0x0080;
+	}
+}
+
+void motor_IC_backward_one_step()
+{
+	static unsigned char i = 0;
+	MOTOR_PORT_s->BSRRH = 0x0098;
+	if (i%2)
+	{
+		MOTOR_PORT_s->BSRRH = 0x0088;
+	}
+	else
+	{
+		MOTOR_PORT_s->BSRRL = 0x0008;
+	}
+}
+
 void motor_auto_forward()
 {
 	while (motor_auto_forward_check() == MOTOR_GOON)
@@ -34,10 +62,29 @@ void motor_auto_backward()
 {
 	while (motor_auto_backward_check() == MOTOR_GOON)
 	{
-		motor_auto_backward();
+		motor_step_backward(MOTOR_SINGLE_STEP);
 	}
 	/*
 	 * need informations
 	 */
 }
 
+void motor_step_forward(int step)
+{
+	int temp = step;
+	while (temp>0)
+	{
+		motor_IC_forward_one_step();
+		temp--;
+	}
+}
+
+void motor_step_backward(int step)
+{
+	int temp = step;
+	while (temp>0)
+	{
+		motor_IC_forward_one_step();
+		temp--;
+	}
+}
