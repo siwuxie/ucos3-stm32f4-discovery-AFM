@@ -16,35 +16,45 @@ void motor_init()
 
 void motor_sleep()
 {
-	MOTOR_PORT_s->BSRRL=0x0030;
+//	MOTOR_PORT_s->BSRRL=0x0020;
+	GPIO_SetBits(MOTOR_PORT_s, MOTOR_WAKEUP);
 }
 
 void motor_IC_forward_one_step()
 {
 	static unsigned char i = 0;
-	MOTOR_PORT_s->BSRRH = 0x0090;
+//	MOTOR_PORT_s->BSRRH = 0x0020;
+	GPIO_ResetBits(MOTOR_PORT_s, MOTOR_WAKEUP);
 	if (i%2)
 	{
-		MOTOR_PORT_s->BSRRL = 0x0080;
+//		MOTOR_PORT_s->BSRRL = 0x0080;
+		GPIO_SetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 	}
 	else
 	{
-		MOTOR_PORT_s->BSRRH = 0x0080;
+//		MOTOR_PORT_s->BSRRH = 0x0080;
+		GPIO_ResetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 	}
+	i++;
 }
 
 void motor_IC_backward_one_step()
 {
 	static unsigned char i = 0;
-	MOTOR_PORT_s->BSRRH = 0x0098;
+//	MOTOR_PORT_s->BSRRH = 0x0028;
+	GPIO_ResetBits(MOTOR_PORT_s, MOTOR_WAKEUP);
+	GPIO_SetBits(MOTOR_PORT_s, MOTOR_DIR);
 	if (i%2)
 	{
-		MOTOR_PORT_s->BSRRH = 0x0088;
+//		MOTOR_PORT_s->BSRRH = 0x0080;
+		GPIO_SetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 	}
 	else
 	{
-		MOTOR_PORT_s->BSRRL = 0x0008;
+//		MOTOR_PORT_s->BSRRL = 0x0080;
+		GPIO_ResetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 	}
+	i++;
 }
 
 void motor_auto_forward()
