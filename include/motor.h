@@ -34,7 +34,7 @@ void motor_init();
 
 #define MOTOR_DIR_FORWARD		1
 #define MOTOR_DIR_BACKWARD		2
-#define MOTOR_STEP_DELAY		20
+#define MOTOR_STEP_DELAY		4000
 
 void motor_IC_one_step();
 void motor_IC_dir(int dir);
@@ -74,6 +74,5 @@ short motor_auto_forward_check();
 short motor_auto_backward_check();
 #define MOTOR_STOP 1
 #define MOTOR_GOON 0
-
 
 #endif
