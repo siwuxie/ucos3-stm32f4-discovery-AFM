@@ -142,8 +142,6 @@ main(void)
   GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
 
   motor_init();
-  motor_sleep();
-
   OSStart(&err);
 
 }
@@ -157,8 +155,8 @@ ledbling(void *p_arg)
 	    Delay(BLINK_TICKS);
 	    GPIO_SetBits(BLINK_PORT, (1 << BLINK_PIN));
 	    Delay(BLINK_TICKS);
-	    motor_step_backward(500);
-	    motor_step_forward(500);
+	    motor_step_backward(50000);
+	    motor_step_forward(50000);
 	  }
 }
 

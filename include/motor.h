@@ -16,11 +16,11 @@
  * 该定义基于STM32F407 - Discovery 评估板，如不同则需要修改。
  */
 #include "stm32f4xx.h"
-#define MOTOR_PORT		RCC_AHB1Periph_GPIOD
-#define MOTOR_PORT_s	GPIOD
-#define MOTOR_DIR		GPIO_Pin_3
-#define MOTOR_WAKEUP	GPIO_Pin_5
-#define MOTOR_SQUARE	GPIO_Pin_7
+#define MOTOR_PORT		RCC_AHB1Periph_GPIOE
+#define MOTOR_PORT_s	GPIOE
+#define MOTOR_DIR		GPIO_Pin_11
+#define MOTOR_WAKEUP	GPIO_Pin_13
+#define MOTOR_SQUARE	GPIO_Pin_15
 
 void motor_init();
 
@@ -32,9 +32,14 @@ void motor_init();
  * 以下接口用于底层驱动与A3967芯片交互。若芯片不同则需要修改具体实现。
  */
 
-void motor_IC_forward_one_step();
-void motor_IC_backward_one_step();
+#define MOTOR_DIR_FORWARD		1
+#define MOTOR_DIR_BACKWARD		2
+#define MOTOR_STEP_DELAY		20
+
+void motor_IC_one_step();
+void motor_IC_dir(int dir);
 void motor_sleep();
+void motor_wakeup();
 
 /*==============End 底层驱动=================*/
 
