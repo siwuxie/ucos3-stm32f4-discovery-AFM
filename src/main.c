@@ -4,10 +4,6 @@
 #include <stdio.h>
 #include "comm.h"
 
-#ifdef HSE_VALUE
-#undef HES_VALUE
-#define HSE_VALUE    ((uint32_t)8000000)
-#endif
 
 /*
  * STM32F4 led blink sample (retargetted to SWO).

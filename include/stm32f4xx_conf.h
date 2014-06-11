@@ -25,6 +25,11 @@
   ******************************************************************************
   */
 
+#ifdef HSE_VALUE
+#undef HSE_VALUE
+#define HSE_VALUE 8000000
+#endif
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F4xx_CONF_H
 #define __STM32F4xx_CONF_H
