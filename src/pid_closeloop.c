@@ -34,7 +34,7 @@ void pid_handler(int signal)
 	if (pid_sum > PID_INT_LIMIT) pid_sum=PID_INT_LIMIT;
 	if (pid_sum < -PID_INT_LIMIT) pid_sum=-PID_INT_LIMIT;
 
-	pid_z = pid_p*pid_err+pid_i*pid_sum+pid_d*(pid_err-pid_derr);
+	pid_z = pid_p*pid_err + pid_i*pid_sum + pid_d*(pid_err-pid_derr);
 
 	if (pid_z>32768) pid_z = 32768;
 	if (pid_z<-32768) pid_z = -32768;
