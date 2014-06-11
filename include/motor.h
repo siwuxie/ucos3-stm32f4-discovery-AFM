@@ -34,16 +34,17 @@ void motor_init();
 
 #define MOTOR_DIR_FORWARD		1
 #define MOTOR_DIR_BACKWARD		2
-#define MOTOR_STEP_DELAY		4000
+#define MOTOR_STEP_DELAY		4000		//该延迟很重要，如果延迟不够，电机不会转动。
 
 void motor_IC_one_step();
 void motor_IC_dir(int dir);
-void motor_sleep();
-void motor_wakeup();
+void motor_IC_sleep();
+void motor_IC_wakeup();
+void motor_IC_init();
 
 /*==============End 底层驱动=================*/
 
-
+void motor_init();
 void motor_auto_forward();
 void motor_auto_backward();
 void motor_stop();
@@ -66,12 +67,8 @@ void motor_origin_set();
  * 返回:
  * 		STOP: 停止进针/退针
  * 		GOON: 继续进针/退针
- *
- * 	该函数需要在特定的地方定义，供该驱动调用
- *
  */
-short motor_auto_forward_check();
-short motor_auto_backward_check();
+short motor_continue_check();
 #define MOTOR_STOP 1
 #define MOTOR_GOON 0
 
