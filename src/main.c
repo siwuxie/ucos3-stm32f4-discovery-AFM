@@ -2,6 +2,12 @@
 #include "includes.h"
 #include "app_cfg.h"
 #include <stdio.h>
+#include "comm.h"
+
+#ifdef HSE_VALUE
+#undef HES_VALUE
+#define HSE_VALUE    ((uint32_t)8000000)
+#endif
 
 /*
  * STM32F4 led blink sample (retargetted to SWO).
@@ -139,6 +145,9 @@ main(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
+
+  comm_init();
+  comm_IC_array_send("nihao");
 
   OSStart(&err);
 
