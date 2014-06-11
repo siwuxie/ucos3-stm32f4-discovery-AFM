@@ -25,10 +25,13 @@ comm_cmd_dispatch(short* cmd)
 {
 	for (int i=0;i<excutor_count;i++)
 	{
-		if ((*cmd == excutor_list[excutor_count].cmd_word)&&(*(cmd+1) == excutor_list[excutor_count].cmd_head))
+		if (*cmd == excutor_list[i].cmd_word)
 		{
-			excutor_list[excutor_count].excu(*(cmd+2),*(cmd+3));
-			break;
+			if (*(cmd+1) == excutor_list[i].cmd_head)
+			{
+				excutor_list[excutor_count].excu(*(cmd+2),*(cmd+3));
+				break;
+			}
 		}
 	}
 }

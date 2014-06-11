@@ -53,7 +53,7 @@ void comm_IC_array_send(unsigned char* data)
 }
 
 void
-USART_IRQHandler(void)
+USART2_IRQHandler(void)
 {
 	if (USART_GetITStatus(COMM_USART_s, USART_IT_RXNE) != RESET)
 	{

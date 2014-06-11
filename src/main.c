@@ -4,6 +4,19 @@
 #include <stdio.h>
 #include "comm.h"
 
+void
+sender(unsigned char* cmd)
+{
+	*cmd=0x01;
+	*(cmd+1)=0x02;
+	*(cmd+2)=0x03;
+	*(cmd+3)=0x04;
+}
+void
+excu(short para_1, short para_2)
+{
+
+}
 
 /*
  * STM32F4 led blink sample (retargetted to SWO).
@@ -143,7 +156,8 @@ main(void)
   GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
 
   comm_init();
-  comm_IC_array_send("nihao");
+  comm_IC_array_send("Communication Test!");
+  comm_cmd_register(excu,sender,0x0001,0x0001);
 
   OSStart(&err);
 
