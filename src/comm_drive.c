@@ -29,7 +29,6 @@ comm_cmd_dispatch(short* cmd)
 		{
 			if (*(cmd+1) == excutor_list[i].cmd_head)
 			{
-				(*excutor_list[i].excu)(*(cmd+2),*(cmd+3));
 				break;
 			}
 		}
