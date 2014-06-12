@@ -37,7 +37,7 @@ comm_cmd_dispatch(short* cmd)
 }
 
 void
-comm_cmd_sing_send(short data, int cmd_word, int cmd_head)
+comm_cmd_send(short data, int cmd_word, int cmd_head)
 {
 	short cmd[COMM_CMD_WORD_SIZE];
 	for (int i=0;i<excutor_count;i++)

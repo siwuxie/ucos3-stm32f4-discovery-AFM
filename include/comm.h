@@ -18,9 +18,7 @@
 #define COMM_USART_RX		GPIO_Pin_3
 
 #define COMM_RX_BUFF_SIZE		8
-
 #define COMM_CMD_WORD_SIZE		4
-
 #define COMM_EXCUTOR_LIST_SIZE 20
 
 struct excutor_list
@@ -34,14 +32,8 @@ typedef struct excutor_list comm_excutor;
 
 void comm_cmd_register(void (*func)(short para_1, short para_2), void (*sender)(unsigned char* cmd), int cmd_word, int cmd_head);
 void comm_cmd_dispatch(short* cmd);
-
+void comm_cmd_send(short data, int cmd_word, int cmd_head);
 void comm_init();
-
-void comm_sing_send(int data);
-void comm_array_send(int* data, int len);
-void comm_sing_send_f(double data);
-void comm_array_send_f(double* data);
-
 
 void comm_IC_send(unsigned char data);
 void comm_IC_array_send(unsigned char* data, int len);
@@ -49,3 +41,8 @@ void comm_IC_init();
 
 //void comm_IC_recieve(short data);
 void USART_IRQHandler(void);
+
+/*
+ * Communication Modules _Send_interface
+ * =====================================
+ */
