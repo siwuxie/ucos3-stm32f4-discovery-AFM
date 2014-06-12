@@ -43,12 +43,13 @@ void comm_IC_send(unsigned char data)
 	USART_SendData(COMM_USART_s, data);
 }
 
-void comm_IC_array_send(unsigned char* data)
+void comm_IC_array_send(unsigned char* data, int len)
 {
-	while (*data)
+	int i=0;
+	while (i<len)
 	{
-		comm_IC_send(*data);
-		data++;
+		comm_IC_send(*(data+i));
+		i++;
 	}
 }
 

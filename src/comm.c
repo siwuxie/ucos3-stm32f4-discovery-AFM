@@ -11,7 +11,7 @@ comm_init()
 }
 
 void
-comm_cmd_register(void(*excu)(),void (*sender)(), int cmd_word, int cmd_head)
+comm_cmd_register(void(*excu)(short para_1, short para_2),void (*sender)(unsigned char* cmd), int cmd_word, int cmd_head)
 {
 	excutor_list[excutor_count].cmd_head = cmd_head;
 	excutor_list[excutor_count].cmd_word = cmd_word;
@@ -29,7 +29,7 @@ comm_cmd_dispatch(short* cmd)
 		{
 			if (*(cmd+1) == excutor_list[i].cmd_head)
 			{
-				excutor_list[excutor_count].excu(*(cmd+2),*(cmd+3));
+				(*excutor_list[i].excu)(*(cmd+2),*(cmd+3));
 				break;
 			}
 		}
@@ -46,7 +46,7 @@ comm_cmd_sing_send(short data, int cmd_word, int cmd_head)
 				&&(cmd_head == excutor_list[excutor_count].cmd_head))
 		{
 			excutor_list[excutor_count].sender(cmd);
-			comm_IC_array_send((unsigned char*)cmd);
+			comm_IC_array_send((unsigned char*)cmd, COMM_CMD_WORD_SIZE*2);
 		}
 	}
 }

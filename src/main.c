@@ -156,7 +156,6 @@ main(void)
   GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
 
   comm_init();
-  comm_IC_array_send("Communication Test!");
   comm_cmd_register(excu,sender,0x0001,0x0001);
 
   OSStart(&err);
@@ -174,6 +173,12 @@ ledbling(void *p_arg)
 	    Delay(BLINK_TICKS);
 	    GPIO_SetBits(BLINK_PORT, (1 << BLINK_PIN));
 	    Delay(BLINK_TICKS);
+	    short a[4];
+	    a[0]=0x0001;
+	    a[1]=0x0203;
+	    a[2]=0x0405;
+	    a[3]=0x0607;
+	    comm_IC_array_send((unsigned char*)a, 8);
 	  }
 }
 

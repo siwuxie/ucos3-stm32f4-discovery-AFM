@@ -25,14 +25,14 @@
 
 struct excutor_list
 {
-	void (*excu)();
-	void (*sender)();
+	void (*excu)(short para_1, short para_2);
+	void (*sender)(unsigned char* cmd);
 	int cmd_word;
 	int cmd_head;
 };
 typedef struct excutor_list comm_excutor;
 
-void comm_cmd_register(void (*func)(), void (*sender)(), int cmd_word, int cmd_head);
+void comm_cmd_register(void (*func)(short para_1, short para_2), void (*sender)(unsigned char* cmd), int cmd_word, int cmd_head);
 void comm_cmd_dispatch(short* cmd);
 
 void comm_init();
@@ -44,7 +44,7 @@ void comm_array_send_f(double* data);
 
 
 void comm_IC_send(unsigned char data);
-void comm_IC_array_send(unsigned char* data);
+void comm_IC_array_send(unsigned char* data, int len);
 void comm_IC_init();
 
 //void comm_IC_recieve(short data);
