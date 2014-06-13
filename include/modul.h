@@ -17,6 +17,7 @@
 
 #include "test_module.h"
 #include "comm_module.h"
+#include "motor_module.h"
 
 #define MODULE_MAX_INTERFACES					20
 #define MODULE_MAX_MODULES						10

@@ -1,7 +1,7 @@
 #include "modul.h"
 
-void (*init_function[10])()={test_module_init,comm_module_init};
-int count_modules = 2;
+void (*init_function[10])()={test_module_init, comm_module_init, motor_module_init};
+int count_modules = 3;
 unsigned char module_list_head = 0;
 
 void module_init()

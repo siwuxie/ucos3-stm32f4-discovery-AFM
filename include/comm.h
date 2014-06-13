@@ -8,7 +8,6 @@
  * 该头文件定义了AFM上下位机交互通信接口。
  */
 
-#include "cmd_def.h"
 #include "stm32f4xx.h"
 
 #define COMM_USART			RCC_APB1Periph_USART2
