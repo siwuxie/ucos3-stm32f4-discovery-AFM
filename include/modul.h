@@ -10,11 +10,13 @@
  */
 
 #include "includes.h"
+#include "stm32f4xx.h""
 
 #ifndef MODULE
 #define MODULE
 
 #include "test_module.h"
+#include "comm_module.h"
 
 #define MODULE_MAX_INTERFACES					20
 #define MODULE_MAX_MODULES						10
@@ -29,7 +31,6 @@ struct module_stru
 {
 	unsigned short module_head;
 	void (*dispatch)(unsigned short *msg);
-//	void (*interfaces[MODULE_MAX_INTERFACES])();
 	void (*taks_init[MODULE_MAX_TASKS])();
 	int  count_tasks;
 	unsigned char priors[MODULE_MAX_TASKS];

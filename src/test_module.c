@@ -26,8 +26,8 @@ void task_led_blink(void *p_arg)
 		OS_ERR err;
 		unsigned short cmd_new[6];
 		unsigned short data[2];
-		data[0]=1;
-		data[1]=1;
+		data[0]=0x1001;
+		data[1]=0x0110;
 		cmd = (unsigned short*)OSQPend(&BlinkQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
 		if (*cmd == MOD_TEST_CMD_BLINK)
 		{
@@ -41,6 +41,12 @@ void task_led_blink(void *p_arg)
 		else if (*cmd == MOD_TEST_CMD_SET_BLINK)
 		{
 			test_render(data,MOD_TEST_HEAD,(MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_BLINK, (MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK,cmd_new);
+			module_msg_dispatch(cmd_new);
+			test_render(data,
+						MOD_COMM_HEAD,
+						(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK,
+						cmd_new);
 			module_msg_dispatch(cmd_new);
 		}
 	}
@@ -65,7 +71,7 @@ void test_task_init()
 				(CPU_CHAR	*)"Led Blink",
 				(OS_TASK_PTR)task_led_blink,
 				(void	*)0,
-				(OS_PRIO	)1,
+				(OS_PRIO	)2,
 				(CPU_STK	*)&Test_led_blink_STK[0],
 				(CPU_STK_SIZE)Test_led_blink_STK[256 / 10],
 				(CPU_STK_SIZE)256,
