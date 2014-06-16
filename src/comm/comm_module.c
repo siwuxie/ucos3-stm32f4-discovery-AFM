@@ -11,7 +11,7 @@ comm_module_init()
 	temp.count_tasks = 1;
 	temp.dispatch = comm_dispatch;
 	temp.taks_init[0] = comm_task_init;
-	module_addtolist(temp);
+	module_addtolist(temp, MOD_COMM_HEAD);
 }
 
 void

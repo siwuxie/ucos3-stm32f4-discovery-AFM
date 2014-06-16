@@ -1,8 +1,10 @@
 #include "modul.h"
 
 void (*init_function[10])()={test_module_init, comm_module_init, motor_module_init};
+unsigned short head_list[10] = {MOD_TEST_HEAD, MOD_COMM_HEAD, MOD_MOTOR_HEAD};
 int count_modules = 3;
-unsigned char module_list_head = 0;
+
+
 
 void module_init()
 {
@@ -17,11 +19,12 @@ void module_init()
 
 void module_task_init()
 {
-	for (int i =0;i<module_list_head;i++)
+	for (int i =0;i<count_modules;i++)
 	{
-		for (int j = 0; j<modules_list[i].count_tasks; j++)
+		struct module_stru temp = modules_list[head_list[i]];
+		for (int j = 0; j<temp.count_tasks; j++)
 		{
-			(*modules_list[i].taks_init[j])();
+			(*temp.taks_init[j])();
 		}
 	}
 }
@@ -52,8 +55,7 @@ unsigned char module_check()
 	return 1;
 }
 
-void module_addtolist(struct module_stru temp)
+void module_addtolist(struct module_stru temp, unsigned short head)
 {
-	modules_list[module_list_head]=temp;
-	module_list_head++;
+	modules_list[head]=temp;
 }

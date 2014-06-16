@@ -10,7 +10,7 @@ motor_module_init()
 	temp.count_tasks = 1;
 	temp.dispatch = motor_dispatch;
 	temp.taks_init[0] = motor_task_init;
-	module_addtolist(temp);
+	module_addtolist(temp, MOD_MOTOR_HEAD);
 }
 
 void
@@ -24,7 +24,7 @@ motor_task_init()
 				(CPU_CHAR	*)"Led Blink",
 				(OS_TASK_PTR)task_motor_move,
 				(void	*)0,
-				(OS_PRIO	)1,
+				(OS_PRIO	)2,
 				(CPU_STK	*)&Motor_Move_Stk[0],
 				(CPU_STK_SIZE)Motor_Move_Stk[256 / 10],
 				(CPU_STK_SIZE)256,
@@ -68,6 +68,8 @@ task_motor_move(void *p_arg)
 	OS_MSG_SIZE size;
 	CPU_TS ts;
 	unsigned short *msg;
+	unsigned short msg_send[6];
+	unsigned short data[2];
 
 	while (1)
 	{
@@ -77,26 +79,80 @@ task_motor_move(void *p_arg)
 		case MOD_MOTOR_CMD_SET_ORIGIN:
 			motor_origin_set();
 
+			data[0]=0x0000;
+			data[1]=0x0000;
+
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_ORIGINATE, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_STEP_FORWARD:
 			motor_step_forward(*(msg+1));
+			data[0] = 0x0000;
+			data[1] = *(msg+1);
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_STEP_BACKWARD:
 			motor_step_backward(*(msg+1));
+			data[0] = *(msg+1);
+			data[1] = 0x0000;
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_AUTO_FORWARD:
-			motor_auto_forward();
+			data[0] = 0x0000;
+			data[1] = MOTOR_SINGLE_STEP;
+			while (motor_continue_check() == MOTOR_GOON)
+			{
+				motor_step_forward(MOTOR_SINGLE_STEP);
+				comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
+				module_msg_dispatch(msg_send);
+			}
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STOP, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_AUTO_BACKWARD:
 			motor_auto_backward();
+			data[0] = MOTOR_SINGLE_STEP;
+			data[1] = 0x0000;
+			while (motor_continue_check() == MOTOR_GOON)
+			{
+				motor_step_backward(MOTOR_SINGLE_STEP);
+				comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
+				module_msg_dispatch(msg_send);
+			}
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STOP, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_STOP:
 			motor_stop();
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STOP, msg_send);
 			break;
+
 		case MOD_MOTOR_CMD_ORIGINATE:
 			motor_originate();
+			int origin_point = motor_getorigin();
+			if (origin_point>0)
+			{
+				data[0] = origin_point;
+			}
+			else
+			{
+				data[1] = origin_point;
+			}
+			comm_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
+						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_ORIGINATE, msg_send);
 			break;
 		}
+		module_msg_dispatch(msg_send);
 	}
 
 }

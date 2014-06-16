@@ -20,7 +20,7 @@
 #include "motor_module.h"
 
 #define MODULE_MAX_INTERFACES					20
-#define MODULE_MAX_MODULES						10
+#define MODULE_MAX_MODULES						0xFF
 #define MODULE_MAX_TASKS						1
 #define MODULE_MSG_LEN							6
 
@@ -42,6 +42,7 @@ struct module_stru
  */
 struct module_stru modules_list[MODULE_MAX_MODULES];
 
+
 /*
  * Interfaces Provides to OS
  * =========================
@@ -53,6 +54,6 @@ unsigned char module_check();
 
 //Modules Call
 void module_msg_dispatch(unsigned short *msg);
-void module_addtolist(struct module_stru temp);
+void module_addtolist(struct module_stru temp, unsigned short head);
 
 #endif

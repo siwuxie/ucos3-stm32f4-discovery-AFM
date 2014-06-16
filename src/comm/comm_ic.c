@@ -72,7 +72,7 @@ USART2_IRQHandler(void)
 		if (rxbuff_count == 8)
 		{
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, DISABLE);
-			module_msg_dispatch((short*)rxbuff);
+			module_msg_dispatch((unsigned short*)rxbuff);
 			rxbuff_count = 0;
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, ENABLE);
 		}

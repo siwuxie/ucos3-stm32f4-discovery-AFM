@@ -28,4 +28,4 @@ void comm_IC_send(unsigned char data);
 void comm_IC_array_send(unsigned char* data, int len);
 void comm_IC_init();
 
-void USART_IRQHandler(void);
+void USART2_IRQHandler(void);

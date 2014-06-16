@@ -26,16 +26,9 @@ void motor_IC_wakeup()
 void motor_IC_one_step()
 {
 	static unsigned char i = 0;
-	if (i%2)
-	{
-		GPIO_SetBits(MOTOR_PORT_s, MOTOR_SQUARE);
-	}
-	else
-	{
-		GPIO_ResetBits(MOTOR_PORT_s, MOTOR_SQUARE);
-	}
+	GPIO_SetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 	for (int i=0;i<MOTOR_STEP_DELAY;i++);
-	i++;
+	GPIO_ResetBits(MOTOR_PORT_s, MOTOR_SQUARE);
 }
 
 void motor_IC_dir(int dir)

@@ -16,8 +16,8 @@
 
 #define MOD_COMM_TASK_SEND				0x0000
 
-#define MOD_COMM_CMD_SEND_INT			0x0000
-#define MOD_COMM_CMD_SEND_FP			0x0001
+#define MOD_COMM_CMD_SEND_INT			0x00
+#define MOD_COMM_CMD_SEND_FP			0x01
 
 OS_Q	SendDataQ;
 

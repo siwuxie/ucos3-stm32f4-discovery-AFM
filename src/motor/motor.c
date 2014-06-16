@@ -92,3 +92,8 @@ short motor_continue_check()
 		return MOTOR_STOP;
 	return MOTOR_GOON;
 }
+
+int motor_getorigin()
+{
+	return motor_origin_point;
+}

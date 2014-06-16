@@ -59,7 +59,7 @@ void test_module_init()
 	temp.count_tasks=1;
 	temp.dispatch=test_dispatch;
 	temp.taks_init[0]=test_task_init;
-	module_addtolist(temp);
+	module_addtolist(temp, MOD_TEST_HEAD);
 }
 void test_task_init()
 {
@@ -71,7 +71,7 @@ void test_task_init()
 				(CPU_CHAR	*)"Led Blink",
 				(OS_TASK_PTR)task_led_blink,
 				(void	*)0,
-				(OS_PRIO	)2,
+				(OS_PRIO	)10,
 				(CPU_STK	*)&Test_led_blink_STK[0],
 				(CPU_STK_SIZE)Test_led_blink_STK[256 / 10],
 				(CPU_STK_SIZE)256,
@@ -86,7 +86,7 @@ void test_task_init()
 void test_dispatch(unsigned short *msg)
 {
 	unsigned short cmd_word = *(msg+1)&0x00FF;
-	unsigned short cmd_head = *(msg+1)>>8;
+//	unsigned short cmd_head = *(msg+1)>>8;
 	OS_ERR err;
 
 	switch (*(msg+1)>>8)
