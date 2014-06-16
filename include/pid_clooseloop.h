@@ -9,7 +9,6 @@
  */
 
 #include "stm32f4xx.h"
-#include "cmd_def.h"
 
 #ifndef PID
 #define PID
