@@ -47,5 +47,4 @@ void scan_ic_output(SCAN_DIR dir,uint16_t value)
 	{
 		DAC_SetChannel2Data(DAC_Align_12b_R, value);
 	}
-	}
 }
