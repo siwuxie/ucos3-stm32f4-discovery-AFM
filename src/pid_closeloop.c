@@ -26,7 +26,7 @@ void pid_init()
 	pid_point_delay = PID_PARA_delay;
 }
 
-void pid_handler(int signal)
+inline void pid_handler(int signal)
 {
 	pid_err = (pid_setpoint - signal)*16.0;
 
