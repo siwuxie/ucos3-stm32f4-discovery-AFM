@@ -5,8 +5,8 @@
  *      Author: baby
  */
 
-#ifndef SCAN_CONTROL_H_
-#define SCAN_CONTROL_H_
+#ifndef SCAN_CONTROL
+#define SCAN_CONTROL
 
 #include "stm32f4xx.h"
 
@@ -24,6 +24,7 @@ typedef enum
 	SCAN_Y=SCAN_OUTPUT_Y
 }SCAN_DIR;
 
+extern void scan_init(void);
 extern void scan_ic_output(SCAN_DIR dir,uint16_t value);
 extern void inc_x();
 extern void inc_y();

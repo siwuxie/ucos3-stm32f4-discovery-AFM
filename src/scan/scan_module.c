@@ -5,26 +5,26 @@
  *      Author: baby
  */
 
-#include "scan_module.h"
+#include "scan_control_module.h"
 
 void
 motor_module_init()
 {
-	motor_init();
+	scan_init();
 
 	struct module_stru temp;
-	temp.module_head = MOD_MOTOR_HEAD;
+	temp.module_head = MOD_SCAN_HEAD;
 	temp.count_tasks = 1;
-	temp.dispatch = motor_dispatch;
-	temp.taks_init[0] = motor_task_init;
-	module_addtolist(temp, MOD_MOTOR_HEAD);
+	temp.dispatch = scan_dispatch;
+	temp.taks_init[0] = scan_task_init;
+	module_addtolist(temp, MOD_SCAN_HEAD);
 }
 
 void
-motor_task_init()
+scan_task_init()
 {
 	OS_ERR err;
-	OSQCreate(&MoveQ, "MoveQ", 10, &err);
+	OSQCreate(&ScanQ, "ScanQ", 10, &err);
 
 	OSTaskCreate(
 				(OS_TCB	*)&Motor_Move_TCB,
@@ -44,7 +44,7 @@ motor_task_init()
 }
 
 void
-motor_dispatch(unsigned short *msg)
+scan_dispatch(unsigned short *msg)
 {
 	OS_ERR err;
 //	unsigned short temp_word = *(msg+1)&0x00FF;
@@ -58,7 +58,7 @@ motor_dispatch(unsigned short *msg)
 }
 
 void
-motor_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
+scan_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
 {
 	*msg = des_head;
 	*(msg+1) = des_word;
