@@ -12,7 +12,7 @@ void module_init()
 		(*init_function[i])();
 	}
 	module_task_init();
-	OSStart(&err);
+//	OSStart(&err);
 }
 
 void module_task_init()
