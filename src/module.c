@@ -1,10 +1,8 @@
 #include "modul.h"
 
-void (*init_function[10])()={test_module_init, comm_module_init, motor_module_init};
-unsigned short head_list[10] = {MOD_TEST_HEAD, MOD_COMM_HEAD, MOD_MOTOR_HEAD};
+void (*init_function[10])()={pid_module_init};
+unsigned short head_list[10] = {MOD_PID_HEAD};
 int count_modules = 3;
-
-
 
 void module_init()
 {

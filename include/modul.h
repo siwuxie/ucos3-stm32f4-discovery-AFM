@@ -18,6 +18,7 @@
 #include "test_module.h"
 #include "comm_module.h"
 #include "motor_module.h"
+#include "pid_closeloop_modul.h"
 
 #define MODULE_MAX_INTERFACES					20
 #define MODULE_MAX_MODULES						0xFF

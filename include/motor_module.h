@@ -51,7 +51,7 @@ void motor_task_init();
 void motor_dispatch(unsigned short *msg);
 void motor_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg);
 
-#endif MOTOR
+#endif
 
 
 
