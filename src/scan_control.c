@@ -10,7 +10,11 @@ uint32_t output_inc_y=0;
 uint32_t output_x=0;
 uint32_t output_y=0;
 
-inline void scan_handler(int signal)
+void scan_init()
+{
+	scan_IC_init();
+}
+inline void scan_handler(int32_t signal)
 {
 
 }
