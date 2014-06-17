@@ -28,7 +28,7 @@
 #define PID_PARA_p					10
 #define PID_PARA_i					5
 #define PID_PARA_d					0
-#define PID_PARA_setpoint			0
+#define PID_PARA_setpoint			1000
 #define PID_PARA_sum				0
 #define PID_PARA_derr				0
 #define PID_PARA_delay				10
