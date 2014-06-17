@@ -7,7 +7,7 @@ pid_module_init()
 
 	struct module_stru temp;
 	temp.module_head = MOD_PID_HEAD;
-	temp.count_tasks = 2;
+	temp.count_tasks = 1;
 	temp.dispatch = pid_dispatch;
 	temp.taks_init[0] = pid_task_init;
 

@@ -10,7 +10,7 @@
  */
 
 #include "includes.h"
-#include "stm32f4xx.h""
+#include "stm32f4xx.h"
 
 #ifndef MODULE
 #define MODULE
