@@ -18,21 +18,23 @@
 #define PID_OUTPUT_PIN				GPIO_Pin_4
 #define PID_OUTPUT_PORT_CHANNEL		DAC_Channel_1
 #define PID_OUTPUT_DAC				RCC_APB1Periph_DAC
+#define PID_OUTPUT_DAC_s			DAC
 
 #define PID_INPUT_PORT				RCC_AHB1Periph_GPIOC
 #define PID_INPUT_PORT_s			GPIOC
 #define PID_INPUT_PIN				GPIO_Pin_0
-#define PID_INPUT_PORT_CHANNEL		ADC_Channel_0
+#define PID_INPUT_PORT_CHANNEL		ADC_Channel_10
 #define PID_INPUT_ADC				RCC_APB2Periph_ADC1
+#define PID_INPUT_ADC_s				ADC1
 
-#define PID_PARA_p					10
-#define PID_PARA_i					5
+#define PID_PARA_p					0.3
+#define PID_PARA_i					0.5
 #define PID_PARA_d					0
-#define PID_PARA_setpoint			1000
+#define PID_PARA_setpoint			2000
 #define PID_PARA_sum				0
 #define PID_PARA_derr				0
 #define PID_PARA_delay				10
-#define PID_INT_LIMIT				20000
+#define PID_INT_LIMIT				4000
 
 void pid_init();
 void pid_handler(unsigned short signal);

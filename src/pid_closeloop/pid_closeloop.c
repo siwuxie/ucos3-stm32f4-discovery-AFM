@@ -30,14 +30,16 @@ pid_init()
 inline void
 pid_handler(unsigned short signal)
 {
-	pid_err = (pid_setpoint - signal)*16.0;
+	pid_err = pid_setpoint - signal;
 	pid_sum += pid_err;
 	if (pid_sum > PID_INT_LIMIT) pid_sum=PID_INT_LIMIT;
 	if (pid_sum < -PID_INT_LIMIT) pid_sum=-PID_INT_LIMIT;
+
 	pid_z = pid_p*pid_err + pid_i*pid_sum + pid_d*(pid_err-pid_derr);
-	if (pid_z>32768) pid_z = 32768;
+
+	if (pid_z>0xfff) pid_z = 0xfff;
 	if (pid_z<0) pid_z = 0;
-	pid_z = pid_z * 4095 / 32768;
+//	pid_z = pid_z * 4095 / 32768;
 	pid_IC_outputz(PID_OUTPUT_PORT_CHANNEL, ((unsigned short)pid_z) & 0x0FFF);
 }
 
