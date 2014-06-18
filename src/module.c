@@ -1,7 +1,7 @@
 #include "modul.h"
 
-void (*init_function[10])()={pid_module_init};
-unsigned short head_list[10] = {MOD_PID_HEAD};
+void (*init_function[10])()={pid_module_init, dds_module_init};
+unsigned short head_list[10] = {MOD_PID_HEAD, MOD_DDS_HEAD};
 int count_modules = 1;
 
 void module_init()
@@ -12,7 +12,6 @@ void module_init()
 		(*init_function[i])();
 	}
 	module_task_init();
-//	OSStart(&err);
 }
 
 void module_task_init()
