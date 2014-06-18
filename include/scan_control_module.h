@@ -14,7 +14,7 @@
 
 #define MOD_SCAN_HEAD						0x0010
 
-#define MOD_SCAN_TASK_MOVE					0x00
+#define MOD_SCAN_TASK				0x00
 
 //#define MOD_MOTOR_CMD_SET_ORIGIN			0x00
 //#define MOD_MOTOR_CMD_AUTO_FORWARD			0x01
@@ -42,12 +42,12 @@ static CPU_STK Scan_Stk[256];
  * Move Task of Motor
  * ==================
  */
-void task_motor_move(void *p_arg);
+extern void task_scan(void *p_arg);
 
-void motor_module_init();
-void motor_task_init();
-void motor_dispatch(unsigned short *msg);
-void motor_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg);
+extern void scan_module_init();
+extern void scan_task_init();
+extern void scan_dispatch(unsigned short *msg);
+extern void scan_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg);
 
 
-#endif /* SCAN_MODULE_H_ */
+#endif /* SCAN_MODULE */

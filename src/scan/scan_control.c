@@ -4,6 +4,7 @@
  *  Created on: 2014年6月17日
  *      Author: baby
  */
+#include "scan_control.h"
 
 uint32_t output_inc_x=0;
 uint32_t output_inc_y=0;

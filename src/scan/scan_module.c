@@ -7,8 +7,7 @@
 
 #include "scan_control_module.h"
 
-void
-motor_module_init()
+void scan_module_init()
 {
 	scan_init();
 
@@ -20,20 +19,19 @@ motor_module_init()
 	module_addtolist(temp, MOD_SCAN_HEAD);
 }
 
-void
-scan_task_init()
+void scan_task_init()
 {
 	OS_ERR err;
 	OSQCreate(&ScanQ, "ScanQ", 10, &err);
 
 	OSTaskCreate(
-				(OS_TCB	*)&Motor_Move_TCB,
-				(CPU_CHAR	*)"Led Blink",
-				(OS_TASK_PTR)task_motor_move,
+				(OS_TCB	*)&Scan_TCB,
+				(CPU_CHAR	*)"Scan Task",
+				(OS_TASK_PTR)task_scan,
 				(void	*)0,
 				(OS_PRIO	)2,
-				(CPU_STK	*)&Motor_Move_Stk[0],
-				(CPU_STK_SIZE)Motor_Move_Stk[256 / 10],
+				(CPU_STK	*)&Scan_Stk[0],
+				(CPU_STK_SIZE)16,
 				(CPU_STK_SIZE)256,
 				(OS_MSG_QTY	)0,
 				(OS_TICK	)0,
@@ -43,22 +41,20 @@ scan_task_init()
 				);
 }
 
-void
-scan_dispatch(unsigned short *msg)
+void scan_dispatch(unsigned short *msg)
 {
 	OS_ERR err;
 //	unsigned short temp_word = *(msg+1)&0x00FF;
 	unsigned short temp_task = *(msg+1)>>8;
 	switch (temp_task)
 	{
-	case MOD_MOTOR_TASK_MOVE:
-		OSQPost(&MoveQ, msg+1, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
+	case MOD_SCAN_TASK:
+		OSQPost(&ScanQ, msg+1, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
 		break;
 	}
 }
 
-void
-scan_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
+void scan_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
 {
 	*msg = des_head;
 	*(msg+1) = des_word;
@@ -68,8 +64,7 @@ scan_render(unsigned short *data, unsigned short des_head, unsigned short des_wo
 	*(msg+5) = ori_task_interface;
 }
 
-void
-task_motor_move(void *p_arg)
+void task_scan(void *p_arg)
 {
 	OS_ERR err;
 	OS_MSG_SIZE size;
@@ -80,7 +75,7 @@ task_motor_move(void *p_arg)
 
 	while (1)
 	{
-		msg = OSQPend(&MoveQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
+		msg = OSQPend(&ScanQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
 		switch (*msg)
 		{
 		case MOD_MOTOR_CMD_SET_ORIGIN:

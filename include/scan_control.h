@@ -30,6 +30,6 @@ extern void inc_x();
 extern void inc_y();
 extern void set_inc(uint32_t inc_x,uint32_t inc_y);
 extern void set_x(uint16_t value);
-extern void set_y(uint16_t,value);
+extern void set_y(uint16_t value);
 
 #endif /* SCAN_CONTROL_H_ */
