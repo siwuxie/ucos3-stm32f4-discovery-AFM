@@ -45,7 +45,7 @@ motor_dispatch(unsigned short *msg)
 	switch (temp_task)
 	{
 	case MOD_MOTOR_TASK_MOVE:
-		OSQPost(&MoveQ, msg+1, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
+		OSQPost(&MoveQ, msg+1, sizeof(unsigned short)*3, OS_OPT_POST_FIFO, &err);
 		break;
 	}
 }
@@ -74,7 +74,7 @@ task_motor_move(void *p_arg)
 	while (1)
 	{
 		msg = OSQPend(&MoveQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
-		switch (*msg)
+		switch (*msg & 0x00ff)
 		{
 		case MOD_MOTOR_CMD_SET_ORIGIN:
 			motor_origin_set();
