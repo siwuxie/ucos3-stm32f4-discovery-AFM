@@ -48,6 +48,7 @@ void motor_init();
 void motor_auto_forward();
 void motor_auto_backward();
 void motor_stop();
+unsigned char motor_check_stop();
 void motor_step_forward(int step);
 void motor_step_backward(int step);
 

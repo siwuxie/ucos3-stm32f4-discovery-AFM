@@ -18,6 +18,8 @@
 
 #define MOD_COMM_CMD_SEND_INT			0x00
 #define MOD_COMM_CMD_SEND_FP			0x01
+#define MOD_COMM_CMD_BOARD_SEND_INT		0x02
+#define MOD_COMM_CMD_BOARD_SEND_FP		0x03
 
 OS_Q	SendDataQ;
 

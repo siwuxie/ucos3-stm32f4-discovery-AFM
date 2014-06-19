@@ -17,7 +17,7 @@ comm_module_init()
 void
 comm_task_init()
 {
-	CPU_ERR err;
+	OS_ERR err;
 	OSQCreate(&SendDataQ, "SendDataQ", 30, &err);
 
 	OSTaskCreate(
@@ -41,8 +41,8 @@ void
 comm_dispatch(unsigned short *msg)
 {
 	OS_ERR err;
-	comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
-	OSQPost(&SendDataQ,msg,sizeof(unsigned short)*4,OS_OPT_POST_FIFO,&err);
+//	comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
+	OSQPost(&SendDataQ,msg,sizeof(unsigned short)*6,OS_OPT_POST_FIFO,&err);
 }
 
 void
@@ -66,6 +66,16 @@ task_comm_send(void *p_arg)
 	while (1)
 	{
 		msg = OSQPend(&SendDataQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
-		comm_IC_array_send((unsigned char*)msg,8);
+		switch (*(msg+1))
+		{
+		case MOD_COMM_CMD_SEND_INT:
+			comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
+			comm_IC_array_send((unsigned char*)msg,8);
+			break;
+		case MOD_COMM_CMD_BOARD_SEND_INT:
+			comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
+			comm_board_IC_array_send((unsigned char*)msg,8);
+			break;
+		}
 	}
 }

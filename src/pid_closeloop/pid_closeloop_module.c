@@ -129,14 +129,20 @@ task_pid_set(void *p_arg)
 			pid_report_err(data);
 			data[1]=0;
 			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_ASK_REPORT_ERR, *msg_send);
+					   (MOD_PID_TASK_SET << 8) + MOD_PID_CMD_ASK_REPORT_ERR, *msg_send);
 			break;
 		case MOD_PID_CMD_ASK_REPORT_Z:
 			pid_report_z(data+1);
 			data[0] = 0;
 			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_ASK_REPORT_Z, *msg_send);
+					   (MOD_PID_TASK_SET<<8) + MOD_PID_CMD_ASK_REPORT_Z, *msg_send);
 			break;
+		case MOD_PID_CMD_MOTOR_STOP:
+			if (pid_setpoint == pid_z)
+			{
+				pid_render(data, MOD_MOTOR_HEAD, (MOD_MOTOR_TASK_MOVE <<8)+ MOD_MOTOR_CMD_STOP,
+						(MOD_PID_TASK_SET<<8) + MOD_PID_CMD_MOTOR_STOP, *msg_send);
+			}
 		}
 		module_msg_dispatch(msg_send);
 	}

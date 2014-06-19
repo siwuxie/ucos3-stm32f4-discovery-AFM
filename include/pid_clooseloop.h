@@ -36,6 +36,8 @@
 #define PID_PARA_delay				10
 #define PID_INT_LIMIT				4000
 
+extern double pid_setpoint, pid_z;
+
 void pid_init();
 void pid_handler(unsigned short signal);
 void pid_setp(double p);

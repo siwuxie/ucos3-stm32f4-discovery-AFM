@@ -86,6 +86,18 @@ void motor_stop()
 	motor_stop_flag = MOTOR_STOP;
 }
 
+void
+motor_reset_stop()
+{
+	motor_stop_flag = MOTOR_GOON;
+}
+
+unsigned char
+motor_check_stop()
+{
+	return motor_stop_flag;
+}
+
 short motor_continue_check()
 {
 	if (motor_stop_flag == MOTOR_STOP)
