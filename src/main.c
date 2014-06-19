@@ -11,6 +11,5 @@ main(void)
 	OS_ERR err;
 	OSInit(&err);
 	module_init();
-	comm_board_IC_array_send("hello",5);
 	OSStart(&err);
 }

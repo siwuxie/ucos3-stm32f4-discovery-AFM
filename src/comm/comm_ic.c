@@ -1,7 +1,7 @@
 #include "comm.h"
 #include "comm_module.h"
 
-unsigned char rxbuff[COMM_RX_BUFF_SIZE+2];
+unsigned char rxbuff[COMM_RX_BUFF_SIZE];
 unsigned char rxbuff_count;
 
 unsigned char rxbuff_board[COMM_BOARD_RX_BUFF_SIZE+2];
@@ -54,11 +54,11 @@ void comm_IC_init()
 
 	GPIO_InitStructure.GPIO_Pin = COMM_BOARD_USART_TX;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_PinAFConfig(GPIOB, COMM_BOARD_USART_TX, GPIO_AF_USART3);
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3);
 
 	GPIO_InitStructure.GPIO_Pin = COMM_BOARD_USART_RX;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_PinAFConfig(GPIOB, COMM_BOARD_USART_RX, GPIO_AF_USART3);
+    GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
 
     USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
