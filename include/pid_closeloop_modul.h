@@ -5,10 +5,10 @@
  * Author: Liwen Zhang
  * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
  * ===============================================================
- * 该头文件定义了PID控制闭环的相关接口
+ * 璇ュご鏂囦欢瀹氫箟浜哖ID鎺у埗闂幆鐨勭浉鍏虫帴鍙�
  */
 
-#include "modul.h"
+#include "module.h"
 #include "pid_clooseloop.h"
 
 #ifndef MODULE_PID

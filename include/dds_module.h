@@ -8,7 +8,7 @@
  * 该头文件定义了DDS模块相关接口
  */
 
-#include "modul.h"
+#include "module.h"
 #include "dds.h"
 
 #ifndef MODULE_DDS

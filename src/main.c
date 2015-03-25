@@ -2,7 +2,7 @@
 #include "includes.h"
 #include "motor.h"
 #include "app_cfg.h"
-#include "modul.h"
+#include "module.h"
 
 
 int

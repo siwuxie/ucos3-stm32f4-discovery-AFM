@@ -5,10 +5,10 @@
  * Author: Liwen Zhang
  * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
  * ===============================================================
- * 该头文件定义了AFM通信模块相关接口。
+ * 璇ュご鏂囦欢瀹氫箟浜咥FM閫氫俊妯″潡鐩稿叧鎺ュ彛銆�
  */
 #include "comm.h"
-#include "modul.h"
+#include "module.h"
 
 #ifndef MODULE_COMM
 #define MODULE_COMM

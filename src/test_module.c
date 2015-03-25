@@ -17,37 +17,46 @@ void task_led_blink(void *p_arg)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(BLINK_PORT, &GPIO_InitStructure);
+
 	unsigned short temp;
 	temp=MOD_TEST_CMD_BLINK;
+
 	OS_ERR err;
+	MSG_STRU *msg;
+	msg->para1 = 1;
+	msg->para2 = 1;
+	msg->para3 = 1;
+	msg->para4 = 1;
+
 	OSQPost(&BlinkQ, &temp, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
+
 	while (1)
 	{
 		OS_ERR err;
-		unsigned short cmd_new[6];
-		unsigned short data[2];
-		data[0]=0x1001;
-		data[1]=0x0110;
-		cmd = (unsigned short*)OSQPend(&BlinkQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
+		cmd = (unsigned short *)OSQPend(&BlinkQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
 		if (*cmd == MOD_TEST_CMD_BLINK)
 		{
 			GPIO_ResetBits(BLINK_PORT, (1 << BLINK_PIN));
-			for (long i=0;i<50000;i++);
+			for (long i=0;i<200000;i++);
 			GPIO_SetBits(BLINK_PORT, (1 << BLINK_PIN));
-			for (long i=0;i<50000;i++);
-			test_render(data,MOD_TEST_HEAD,(MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK, (MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_BLINK,cmd_new);
-			module_msg_dispatch(cmd_new);
+			for (long i=0;i<220000;i++);
+			module_msg_render(msg,
+						MOD_TEST_HEAD,
+						MOD_TEST_TASK_BLINK<<8 + MOD_TEST_CMD_SET_BLINK,
+						0x0000,
+						0x0000,
+						0x0000);
+			module_msg_dispatch(msg);
 		}
 		else if (*cmd == MOD_TEST_CMD_SET_BLINK)
 		{
-			test_render(data,MOD_TEST_HEAD,(MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_BLINK, (MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK,cmd_new);
-			module_msg_dispatch(cmd_new);
-			test_render(data,
-						MOD_COMM_HEAD,
-						(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-						(MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK,
-						cmd_new);
-			module_msg_dispatch(cmd_new);
+			module_msg_render(msg,
+					MOD_TEST_HEAD,
+					MOD_TEST_TASK_BLINK<<8 + MOD_TEST_CMD_BLINK,
+					0x0000,
+					0x0000,
+					0x0000);
+			module_msg_dispatch(msg);
 		}
 	}
 }
@@ -83,17 +92,18 @@ void test_task_init()
 				);
 }
 
-void test_dispatch(unsigned short *msg)
+void test_dispatch(void *msg)
 {
-	unsigned short cmd_word = *(msg+1)&0x00FF;
-//	unsigned short cmd_head = *(msg+1)>>8;
+	CMD_STRU *temp = msg;
+	unsigned short cmd_word = (temp->cmd_word)&0x00FF;
+
 	OS_ERR err;
 
-	switch (*(msg+1)>>8)
+	switch (temp->cmd_word>>8)
 	{
 	case MOD_TEST_TASK_BLINK:
 	{
-		switch (*(msg+1)&0x00FF)
+		switch ((temp->cmd_word)&0x00FF)
 		{
 		case MOD_TEST_CMD_BLINK:
 			OSQPost(&BlinkQ, &cmd_word, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
@@ -107,13 +117,3 @@ void test_dispatch(unsigned short *msg)
 	}
 }
 
-void test_render(unsigned short *data, unsigned short des_head, unsigned short des_word,
-				 unsigned short ori_task_interface, unsigned short *msg)
-{
-	*msg = des_head;
-	*(msg+1) = des_word;
-	*(msg+2) = *data;
-	*(msg+3) = *(data+1);
-	*(msg+4) = MOD_TEST_HEAD;
-	*(msg+5) = ori_task_interface;
-}

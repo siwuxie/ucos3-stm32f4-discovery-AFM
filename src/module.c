@@ -1,8 +1,8 @@
-#include "modul.h"
+#include "module.h"
 
-void (*init_function[10])()={pid_module_init, comm_module_init};
-unsigned short head_list[10] = {MOD_PID_HEAD, MOD_COMM_HEAD};
-int count_modules = 2;
+void (*init_function[10])()={test_module_init};
+unsigned short head_list[10] = {MOD_TEST_HEAD};
+int count_modules = 1;
 
 void module_init()
 {
@@ -26,36 +26,33 @@ void module_task_init()
 	}
 }
 
-void module_msg_dispatch(unsigned short *msg)
+void module_msg_dispatch(CMD_STRU *msg)
 {
-	if (*modules_list[*msg].dispatch)
+	if (*modules_list[msg->cmd_head].dispatch)
 	{
-		(*modules_list[*msg].dispatch)(msg);
+		(*modules_list[msg->cmd_head].dispatch)(msg);
 	}
-}
-
-unsigned char module_check()
-{
-	int check[MODULE_MAX_TASKS*MODULE_MAX_MODULES];
-	for (int i = 0; i<MODULE_MAX_TASKS*MODULE_MAX_MODULES; i++)
-	{
-		check[i]=0;
-	}
-	for (int i = 0; i<MODULE_MAX_MODULES*MODULE_MAX_TASKS; i++)
-	{
-		if (check[i]==0)
-		{
-			check[i]=1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	return 1;
 }
 
 void module_addtolist(struct module_stru temp, unsigned short head)
 {
 	modules_list[head]=temp;
 }
+
+void module_msg_render(MSG_STRU *msg,
+		unsigned short p1,
+		unsigned short p2,
+		unsigned short p3,
+		unsigned short p4,
+		unsigned short p5)
+{
+	MSG_STRU temp;
+	temp.para1 = p1;
+	temp.para2 = p2;
+	temp.para3 = p3;
+	temp.para4 = p4;
+	temp.para5 = p5;
+	*msg = temp;
+}
+
+

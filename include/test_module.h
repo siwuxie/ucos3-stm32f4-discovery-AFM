@@ -1,7 +1,9 @@
-#include "modul.h"
+#include "module.h"
 
 #define MOD_TEST_HEAD						0x0000
+
 #define MOD_TEST_TASK_BLINK					0x00
+
 #define MOD_TEST_CMD_BLINK					0x00
 #define MOD_TEST_CMD_SET_BLINK				0x01
 
@@ -18,8 +20,7 @@ void task_led_blink(void *p_arg);
 
 void test_module_init();
 void test_task_init();
-void test_dispatch(unsigned short *msg);
-void test_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg);
 void interface_blink();
 void interface_set_blink();
+void test_dispatch(void *msg);
 

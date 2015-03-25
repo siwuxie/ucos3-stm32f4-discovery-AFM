@@ -1,11 +1,11 @@
 /*
  * scan_module.h
  *
- *  Created on: 2014年6月17日
+ *  Created on: 2014骞�鏈�7鏃�
  *      Author: baby
  */
 
-#include "modul.h"
+#include "module.h"
 #include "scan_control.h"
 
 #ifndef SCAN_MODULE
