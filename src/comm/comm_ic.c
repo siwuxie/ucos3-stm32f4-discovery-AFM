@@ -105,10 +105,10 @@ USART2_IRQHandler(void)
 			rxbuff[rxbuff_count-1]=rxbuff[rxbuff_count-2];
 			rxbuff[rxbuff_count-2]=temp;
 		}
-		if (rxbuff_count == 8)
+		if (rxbuff_count == COMM_RX_BUFF_SIZE)
 		{
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, DISABLE);
-			module_msg_dispatch((unsigned short*)rxbuff);
+			module_msg_dispatch((CMD_STRU*)rxbuff);
 			rxbuff_count = 0;
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, ENABLE);
 		}
@@ -133,7 +133,7 @@ USART3_IRQHandler(void)
 		if (rxbuff_count_board == 8)
 		{
 			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, DISABLE);
-			module_msg_dispatch((unsigned short*)rxbuff_board);
+			module_msg_dispatch((CMD_STRU*)rxbuff_board);
 			rxbuff_count_board = 0;
 			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, ENABLE);
 		}

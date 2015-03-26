@@ -22,10 +22,10 @@ comm_task_init()
 
 	OSTaskCreate(
 				(OS_TCB	*)&Comm_Send_TCB,
-				(CPU_CHAR	*)"Led Blink",
+				(CPU_CHAR	*)"COMM",
 				(OS_TASK_PTR)task_comm_send,
 				(void	*)0,
-				(OS_PRIO	)1,
+				(OS_PRIO	)10,
 				(CPU_STK	*)&Comm_Send_Stk[0],
 				(CPU_STK_SIZE)Comm_Send_Stk[256 / 10],
 				(CPU_STK_SIZE)256,
@@ -38,23 +38,12 @@ comm_task_init()
 }
 
 void
-comm_dispatch(unsigned short *msg)
+comm_dispatch(void *msg)
 {
 	OS_ERR err;
-//	comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
-	OSQPost(&SendDataQ,msg,sizeof(unsigned short)*6,OS_OPT_POST_FIFO,&err);
+	OSQPost(&SendDataQ,msg,sizeof(CMD_STRU),OS_OPT_POST_FIFO,&err);
 }
 
-void
-comm_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
-{
-	*msg = des_head;
-	*(msg+1) = des_word;
-	*(msg+2) = *data;
-	*(msg+3) = *(data+1);
-	*(msg+4) = MOD_COMM_HEAD;
-	*(msg+5) = 0;
-}
 
 void
 task_comm_send(void *p_arg)
@@ -62,19 +51,23 @@ task_comm_send(void *p_arg)
 	OS_ERR err;
 	OS_MSG_SIZE size;
 	CPU_TS ts;
-	unsigned short *msg;
+	CMD_STRU *msg;
 	while (1)
 	{
-		msg = OSQPend(&SendDataQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
-		switch (*(msg+1))
+		msg = (CMD_STRU*)OSQPend(&SendDataQ,0,OS_OPT_PEND_BLOCKING,&size,&ts,&err);
+		module_msg_render((MSG_STRU*)msg,
+				msg->cmd_head,
+				msg->cmd_word,
+				msg->para1,
+				msg->para2,
+				msg->para3);
+		switch (msg->cmd_word)
 		{
 		case MOD_COMM_CMD_SEND_INT:
-			comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
-			comm_IC_array_send((unsigned char*)msg,8);
+			comm_IC_array_send((unsigned char*)msg,10);
 			break;
 		case MOD_COMM_CMD_BOARD_SEND_INT:
-			comm_render(msg+2,*(msg+4),*(msg+5),0,msg);
-			comm_board_IC_array_send((unsigned char*)msg,8);
+			comm_board_IC_array_send((unsigned char*)msg,10);
 			break;
 		}
 	}

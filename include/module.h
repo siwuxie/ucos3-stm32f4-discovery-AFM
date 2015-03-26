@@ -33,7 +33,7 @@
 struct module_stru
 {
 	unsigned short module_head;
-	void (*dispatch)(unsigned short *msg);
+	void (*dispatch)(void *msg);
 	void (*taks_init[MODULE_MAX_TASKS])();
 	int  count_tasks;
 	unsigned char priors[MODULE_MAX_TASKS];

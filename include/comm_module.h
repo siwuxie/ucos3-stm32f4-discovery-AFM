@@ -12,14 +12,15 @@
 
 #ifndef MODULE_COMM
 #define MODULE_COMM
+
 #define MOD_COMM_HEAD					0x0001
 
-#define MOD_COMM_TASK_SEND				0x0000
+#define MOD_COMM_TASK_SEND				0x00
 
 #define MOD_COMM_CMD_SEND_INT			0x00
-#define MOD_COMM_CMD_SEND_FP			0x01
+//#define MOD_COMM_CMD_SEND_FP			0x01
 #define MOD_COMM_CMD_BOARD_SEND_INT		0x02
-#define MOD_COMM_CMD_BOARD_SEND_FP		0x03
+//#define MOD_COMM_CMD_BOARD_SEND_FP		0x03
 
 OS_Q	SendDataQ;
 
@@ -34,7 +35,7 @@ void task_comm_send(void *p_arg);
 
 void comm_module_init();
 void comm_task_init();
-void comm_dispatch(unsigned short *msg);
+void comm_dispatch(void *msg);
 void comm_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg);
 
 #endif
