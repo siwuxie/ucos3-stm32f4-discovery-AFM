@@ -5,3 +5,6 @@ encoding//include/module.h=UTF-8
 encoding//include/motor_module.h=UTF-8
 encoding//include/pid_closeloop_modul.h=UTF-8
 encoding//include/scan_control_module.h=UTF-8
+encoding//src/scan/scan_control.c=UTF-8
+encoding//src/scan/scan_control_ic.c=UTF-8
+encoding//src/scan/scan_module.c=UTF-8
