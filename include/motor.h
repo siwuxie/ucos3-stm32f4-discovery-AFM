@@ -5,15 +5,15 @@
  * Co-Author: Liwen Zhang
  * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
  * ===========================================================
- * 该头文件定义了AFM中步进电机驱动接口
+ * 璇ュご鏂囦欢瀹氫箟浜咥FM涓杩涚數鏈洪┍鍔ㄦ帴鍙�
  */
 #ifndef MOTOR
 #define MOTOR
 
 /*
- * 电机工作GPIO管脚定义
+ * 鐢垫満宸ヤ綔GPIO绠¤剼瀹氫箟
  * ====================
- * 该定义基于STM32F407 - Discovery 评估板，如不同则需要修改。
+ * 璇ュ畾涔夊熀浜嶴TM32F407 - Discovery 璇勪及鏉匡紝濡備笉鍚屽垯闇�淇敼銆�
  */
 #include "stm32f4xx.h"
 #define MOTOR_PORT		RCC_AHB1Periph_GPIOE
@@ -24,17 +24,17 @@
 
 void motor_init();
 
-/*=============End 管脚定义================*/
+/*=============End 绠¤剼瀹氫箟================*/
 
 /*
- * 电机工作底层驱动
+ * 鐢垫満宸ヤ綔搴曞眰椹卞姩
  * ================
- * 以下接口用于底层驱动与A3967芯片交互。若芯片不同则需要修改具体实现。
+ * 浠ヤ笅鎺ュ彛鐢ㄤ簬搴曞眰椹卞姩涓嶢3967鑺墖浜や簰銆傝嫢鑺墖涓嶅悓鍒欓渶瑕佷慨鏀瑰叿浣撳疄鐜般�
  */
 
 #define MOTOR_DIR_FORWARD		1
 #define MOTOR_DIR_BACKWARD		2
-#define MOTOR_STEP_DELAY		4000		//该延迟很重要，如果延迟不够，电机不会转动。
+#define MOTOR_STEP_DELAY		20000		//璇ュ欢杩熷緢閲嶈锛屽鏋滃欢杩熶笉澶燂紝鐢垫満涓嶄細杞姩銆�
 
 void motor_IC_one_step();
 void motor_IC_dir(int dir);
@@ -42,7 +42,7 @@ void motor_IC_sleep();
 void motor_IC_wakeup();
 void motor_IC_init();
 
-/*==============End 底层驱动=================*/
+/*==============End 搴曞眰椹卞姩=================*/
 
 void motor_init();
 void motor_auto_forward();
@@ -57,18 +57,18 @@ void motor_origin_set();
 int motor_getorigin();
 
 /*
- * 标准单步长
+ * 鏍囧噯鍗曟闀�
  * ==========
- * 标准一个步长的进针量
+ * 鏍囧噯涓�釜姝ラ暱鐨勮繘閽堥噺
  */
 #define MOTOR_SINGLE_STEP		2
 
 /*
- * 自动进针判断标准
+ * 鑷姩杩涢拡鍒ゆ柇鏍囧噯
  * ================
- * 返回:
- * 		STOP: 停止进针/退针
- * 		GOON: 继续进针/退针
+ * 杩斿洖:
+ * 		STOP: 鍋滄杩涢拡/閫�拡
+ * 		GOON: 缁х画杩涢拡/閫�拡
  */
 short motor_continue_check();
 #define MOTOR_STOP 1

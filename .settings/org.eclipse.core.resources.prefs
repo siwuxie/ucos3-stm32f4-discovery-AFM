@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//include/comm.h=UTF-8
 encoding//include/comm_module.h=UTF-8
 encoding//include/module.h=UTF-8
+encoding//include/motor.h=UTF-8
 encoding//include/motor_module.h=UTF-8
 encoding//include/pid_closeloop_modul.h=UTF-8
 encoding//include/scan_control_module.h=UTF-8

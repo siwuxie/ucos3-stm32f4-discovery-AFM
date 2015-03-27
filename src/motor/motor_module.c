@@ -107,48 +107,21 @@ task_motor_move(void *p_arg)
 			data[0]=0x0000;
 			data[1]=0x0000;
 
-////			motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-////						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_ORIGINATE, msg_send);
-//			module_msg_render(send_msg,
-//					MOD_COMM_HEAD,
-//					(MOD_COMM_TASK_SEND<<8)+MOD_COMM_CMD_SEND_INT,
-//					data[0])
 			break;
 
 		case MOD_MOTOR_CMD_STEP_FORWARD:
 			motor_step_forward(msg->para1);
-
-//			data[0] = 0x0000;
-//			data[1] = *(msg+1);
-
-//			motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
 			break;
 
 		case MOD_MOTOR_CMD_STEP_BACKWARD:
 			motor_step_backward(msg->para1);
-
-//			data[0] = *(msg+1);
-//			data[1] = 0x0000;
-
-//			motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_FORWARD:
-			data[0] = 0x0000;
-			data[1] = MOTOR_SINGLE_STEP;
 			while (motor_continue_check() == MOTOR_GOON)
 			{
 				motor_step_forward(MOTOR_SINGLE_STEP);
-//				moter_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
-				module_msg_dispatch(msg_send);
-
-//				motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_BOARD_SEND_INT,
-//							(MOD_PID_TASK_SET<<8) + MOD_PID_CMD_MOTOR_STOP, msg_send);
 				*(msg_send+4) = MOD_PID_HEAD;
-				module_msg_dispatch(msg_send);
 
 				if (motor_check_stop()==MOTOR_STOP)
 				{
@@ -157,21 +130,13 @@ task_motor_move(void *p_arg)
 				}
 				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
-//			motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STOP, msg_send);
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_BACKWARD:
 			motor_auto_backward();
-			data[0] = MOTOR_SINGLE_STEP;
-			data[1] = 0x0000;
 			while (motor_continue_check() == MOTOR_GOON)
 			{
 				motor_step_backward(MOTOR_SINGLE_STEP);
-//				motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STEPS, msg_send);
-				module_msg_dispatch(msg_send);
-
 				if (motor_check_stop()==MOTOR_STOP)
 				{
 					motor_reset_stop();
@@ -179,8 +144,6 @@ task_motor_move(void *p_arg)
 				}
 				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
-//			motor_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-//						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_STOP, msg_send);
 			break;
 
 		case MOD_MOTOR_CMD_ORIGINATE:
@@ -189,18 +152,15 @@ task_motor_move(void *p_arg)
 			data[0] = origin_point;
 			if (origin_point>0)
 			{
-//				motor_render(data, MOD_MOTOR_HEAD, (MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_CMD_STEP_BACKWARD,
-//							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_ORIGINATE, msg_send);
+
 			}
 			else
 			{
-//				motor_render(data, MOD_MOTOR_HEAD, (MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_CMD_STEP_FORWARD,
-//							(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_REPORT_ORIGINATE, msg_send);
+
 			}
 
 			break;
 		}
-//		module_msg_dispatch(msg_send);
 	}
 
 }
