@@ -39,7 +39,7 @@ void motor_step_backward(int step);
 
 void motor_originate();
 void motor_origin_set();
-int motor_getorigin();
+short motor_getorigin();
 
 
 #define MOTOR_SINGLE_STEP		2
