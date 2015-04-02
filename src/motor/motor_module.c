@@ -51,8 +51,9 @@ motor_task_init()
 				(OS_OPT)(OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR),
 				(OS_ERR *)&err
 				);
-
 }
+
+
 
 void
 motor_dispatch(void *msg)
@@ -103,10 +104,6 @@ task_motor_move(void *p_arg)
 		{
 		case MOD_MOTOR_CMD_SET_ORIGIN:
 			motor_origin_set();
-
-			data[0]=0x0000;
-			data[1]=0x0000;
-
 			break;
 
 		case MOD_MOTOR_CMD_STEP_FORWARD:
@@ -121,8 +118,6 @@ task_motor_move(void *p_arg)
 			while (motor_continue_check() == MOTOR_GOON)
 			{
 				motor_step_forward(MOTOR_SINGLE_STEP);
-				*(msg_send+4) = MOD_PID_HEAD;
-
 				if (motor_check_stop()==MOTOR_STOP)
 				{
 					motor_reset_stop();
@@ -133,7 +128,6 @@ task_motor_move(void *p_arg)
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_BACKWARD:
-			motor_auto_backward();
 			while (motor_continue_check() == MOTOR_GOON)
 			{
 				motor_step_backward(MOTOR_SINGLE_STEP);
@@ -148,17 +142,6 @@ task_motor_move(void *p_arg)
 
 		case MOD_MOTOR_CMD_ORIGINATE:
 			motor_originate();
-			int origin_point = motor_getorigin();
-			data[0] = origin_point;
-			if (origin_point>0)
-			{
-
-			}
-			else
-			{
-
-			}
-
 			break;
 		}
 	}

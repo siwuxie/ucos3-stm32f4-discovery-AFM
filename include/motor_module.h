@@ -1,13 +1,3 @@
-/*
- * General Atomic Force Microscope (AFM) - Module of Step Motor
- * ===============================================================
- * Date: 11 June 2014
- * Author: Liwen Zhang
- * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
- * ===============================================================
- * 璇ュご鏂囦欢瀹氫箟浜咥FM閫氫俊妯″潡鐩稿叧鎺ュ彛銆�
- */
-
 #include "module.h"
 #include "motor.h"
 
@@ -16,18 +6,23 @@
 
 #define MOD_MOTOR_HEAD						0x0002
 
-#define MOD_MOTOR_TASK_MOVE					0x00
-
-#define MOD_MOTOR_CMD_SET_ORIGIN			0x00
+#define MOD_MOTOR_TASK_MOVE									0x00
+//-----------------------------------------------------------------------------------
+#define MOD_MOTOR_CMD_SET_ORIGIN						0x00
 #define MOD_MOTOR_CMD_AUTO_FORWARD			0x01
 #define MOD_MOTOR_CMD_AUTO_BACKWARD			0x02
-#define MOD_MOTOR_CMD_STEP_FORWARD			0x03
+#define MOD_MOTOR_CMD_STEP_FORWARD				0x03
 #define MOD_MOTOR_CMD_STEP_BACKWARD			0x04
-#define MOD_MOTOR_CMD_ORIGINATE				0x05
+#define MOD_MOTOR_CMD_ORIGINATE						0x05
+//***********************************************
 
-#define MOD_MOTOR_TASK_STOP					0X01
-#define MOD_MOTOR_CMD_STOP					0X00
 
+#define MOD_MOTOR_TASK_STOP									0X01
+//-----------------------------------------------------------------------------------
+#define MOD_MOTOR_CMD_STOP									0X00
+
+
+//***********************************************
 /*
  * Send From AFM
  * =============
