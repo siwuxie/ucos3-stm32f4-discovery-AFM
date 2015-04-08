@@ -1,7 +1,7 @@
 #include "motor.h"
 
 
-long motor_origin_point;
+short motor_origin_point;
 int motor_stop_flag;
 
 void motor_init()
@@ -118,7 +118,7 @@ short motor_continue_check()
 	return MOTOR_GOON;
 }
 
-int motor_getorigin()
-{
-	return motor_origin_point;
-}
+//short motor_getorigin()
+//{
+//	return motor_origin_point;
+//}
