@@ -10,6 +10,15 @@ void motor_init()
 	motor_origin_point = 0;
 }
 
+int motor_directions()
+{
+	if (motor_origin_point>0)
+		return(1);
+	else
+		return(0);
+}
+
+
 void motor_auto_forward()
 {
 	while (motor_continue_check() == MOTOR_GOON)
@@ -67,6 +76,7 @@ void motor_origin_set()
 	 * need informations
 	 */
 }
+
 
 void motor_originate()
 {

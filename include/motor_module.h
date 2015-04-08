@@ -14,6 +14,11 @@
 #define MOD_MOTOR_CMD_STEP_FORWARD				0x03
 #define MOD_MOTOR_CMD_STEP_BACKWARD			0x04
 #define MOD_MOTOR_CMD_ORIGINATE						0x05
+
+#define MOD_MOTOR_STATUS_FORWARD					0X01
+#define MOD_MOTOR_STATUS_BACKWARD					0X00
+#define MOD_MOTOR_STATUS_MOVING						0X01
+#define MOD_MOTOR_STATUS_STOPPING					0X00
 //***********************************************
 
 

@@ -41,7 +41,7 @@ motor_task_init()
 				(CPU_CHAR	*)"Led Blink11",
 				(OS_TASK_PTR)task_motor_stop,
 				(void	*)0,
-				(OS_PRIO	)1,
+				(OS_PRIO	)20,
 				(CPU_STK	*)&Motor_Stop_Stk[0],
 				(CPU_STK_SIZE)Motor_Stop_Stk[256 / 10],
 				(CPU_STK_SIZE)64,
@@ -108,10 +108,16 @@ task_motor_move(void *p_arg)
 
 		case MOD_MOTOR_CMD_STEP_FORWARD:
 			motor_step_forward(msg->para1);
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING );
+			module_msg_dispatch(send_msg);
 			break;
 
 		case MOD_MOTOR_CMD_STEP_BACKWARD:
 			motor_step_backward(msg->para1);
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+								MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING );
+			module_msg_dispatch(send_msg);
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_FORWARD:
@@ -123,7 +129,10 @@ task_motor_move(void *p_arg)
 					motor_reset_stop();
 					break;
 				}
-				for (int i=0;i<MOTOR_STEP_DELAY;i++);
+				module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+									MOD_MOTOR_STATUS_FORWARD, MOTOR_SINGLE_STEP, MOD_MOTOR_STATUS_MOVING );
+				module_msg_dispatch(send_msg);
+//				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
@@ -136,7 +145,10 @@ task_motor_move(void *p_arg)
 					motor_reset_stop();
 					break;
 				}
-				for (int i=0;i<MOTOR_STEP_DELAY;i++);
+				module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+													MOD_MOTOR_STATUS_BACKWARD, MOTOR_SINGLE_STEP, MOD_MOTOR_STATUS_MOVING );
+				module_msg_dispatch(send_msg);
+//				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
@@ -145,5 +157,4 @@ task_motor_move(void *p_arg)
 			break;
 		}
 	}
-
 }
