@@ -60,14 +60,7 @@ task_comm_send(void *p_arg)
 				msg->para1,
 				msg->para2,
 				msg->para3);
-//		switch (msg->cmd_word)
-//		{
-//		case MOD_COMM_CMD_SEND_INT:
 		comm_IC_array_send((unsigned char*)msg,10);
-//			break;
-//		case MOD_COMM_CMD_BOARD_SEND_INT:
-//			comm_board_IC_array_send((unsigned char*)msg,10);
-//			break;
-//		}
+
 	}
 }

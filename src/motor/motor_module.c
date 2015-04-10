@@ -42,10 +42,10 @@ motor_task_init()
 				(OS_TASK_PTR)task_motor_stop,
 				(void	*)0,
 
-				(OS_PRIO	)20,
+				(OS_PRIO	)2,
 
 				(CPU_STK	*)&Motor_Stop_Stk[0],
-				(CPU_STK_SIZE)Motor_Stop_Stk[256 / 10],
+				(CPU_STK_SIZE)Motor_Stop_Stk[64 / 10],
 				(CPU_STK_SIZE)64,
 				(OS_MSG_QTY	)0,
 				(OS_TICK	)0,
@@ -61,8 +61,8 @@ void
 motor_dispatch(void *msg)
 {
 	OS_ERR err;
-
-	switch ( (((CMD_STRU*)msg)->cmd_head) >> 8)
+	CMD_STRU* temp =(CMD_STRU*)msg;
+	switch ( (((CMD_STRU*)msg)->cmd_word)>>8)
 	{
 	case MOD_MOTOR_TASK_MOVE:
 		OSQPost(&MoveQ, msg, sizeof(unsigned short)*5, OS_OPT_POST_FIFO, &err);
@@ -102,6 +102,7 @@ task_motor_move(void *p_arg)
 	report_data[0] = 0;
 	report_data[1] = 0;
 	report_data[2] = 0;
+	long temp;
 
 	while (1)
 	{
@@ -113,12 +114,12 @@ task_motor_move(void *p_arg)
 			break;
 
 		case MOD_MOTOR_CMD_STEP_FORWARD:
-
-			report_data[0] = 1;
-			report_data[1] = msg->para1;
-			motor_report(msg_send, report_data);
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, msg->para1, MOD_MOTOR_STATUS_MOVING);
 
 			motor_step_forward(msg->para1);
+
 			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
 					MOD_MOTOR_STATUS_FORWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING );
 			module_msg_dispatch(send_msg);
@@ -126,59 +127,57 @@ task_motor_move(void *p_arg)
 			break;
 
 		case MOD_MOTOR_CMD_STEP_BACKWARD:
-			report_data[0] = 2;
-			report_data[1] = msg->para1;
-			motor_report(msg_send, report_data);
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+								MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_MOVING );
+			module_msg_dispatch(send_msg);
 
 			motor_step_backward(msg->para1);
 
 			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
-								MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING );
+					MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING);
 			module_msg_dispatch(send_msg);
-
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_FORWARD:
-			report_data[0] = 1;
-			report_data[1] = 0xffff;
-			motor_report(msg_send, report_data);
-			while (motor_continue_check() == MOTOR_GOON)
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, 0, MOD_MOTOR_STATUS_MOVING);
+			module_msg_dispatch(send_msg);
+			temp = 0;
+			while (1)
 			{
 				motor_step_forward(MOTOR_SINGLE_STEP);
+				temp++;
 				if (motor_check_stop()==MOTOR_STOP)
 				{
 					motor_reset_stop();
-					report_data[0] = 0;
-					report_data[1] = 0;
-					motor_report(msg_send, report_data);
+					module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+							MOD_MOTOR_STATUS_FORWARD, temp, MOD_MOTOR_STATUS_STOPPING);
+					module_msg_dispatch(send_msg);
 					break;
 				}
-				module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
-									MOD_MOTOR_STATUS_FORWARD, MOTOR_SINGLE_STEP, MOD_MOTOR_STATUS_MOVING );
-				module_msg_dispatch(send_msg);
-//				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_BACKWARD:
-			report_data[0] = 2;
-			report_data[1] = 0xffff;
-			motor_report(msg_send, report_data);
-			while (motor_continue_check() == MOTOR_GOON)
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_BACKWARD, 0, MOD_MOTOR_STATUS_MOVING);
+			module_msg_dispatch(send_msg);
+			temp =0;
+			while (1)
 			{
+				temp++;
 				motor_step_backward(MOTOR_SINGLE_STEP);
 				if (motor_check_stop()==MOTOR_STOP)
 				{
-					report_data[0] = 0;
-					report_data[1] = 0;
-					motor_report(msg_send, report_data);
 					motor_reset_stop();
+					module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+							MOD_MOTOR_STATUS_BACKWARD, temp, MOD_MOTOR_STATUS_STOPPING);
+					module_msg_dispatch(send_msg);
 					break;
 				}
-				module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
-													MOD_MOTOR_STATUS_BACKWARD, MOTOR_SINGLE_STEP, MOD_MOTOR_STATUS_MOVING );
-				module_msg_dispatch(send_msg);
-//				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
@@ -189,14 +188,3 @@ task_motor_move(void *p_arg)
 	}
 }
 
-void
-motor_report(void* msg, unsigned short *data)
-{
-	module_msg_render((MSG_STRU*)msg,
-			 MOD_COMM_HEAD,
-			 MOD_COMM_TASK_REPORT,
-			 *data,
-			 *(data+1),
-			 *(data+2));
-	module_msg_dispatch((CMD_STRU*)msg);
-}
