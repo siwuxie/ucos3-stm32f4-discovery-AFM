@@ -25,7 +25,7 @@ comm_task_init()
 				(CPU_CHAR	*)"COMM",
 				(OS_TASK_PTR)task_comm_send,
 				(void	*)0,
-				(OS_PRIO	)10,
+				(OS_PRIO	)1,
 				(CPU_STK	*)&Comm_Send_Stk[0],
 				(CPU_STK_SIZE)Comm_Send_Stk[256 / 10],
 				(CPU_STK_SIZE)256,
@@ -44,7 +44,6 @@ comm_dispatch(void *msg)
 	OSQPost(&SendDataQ,msg,sizeof(CMD_STRU),OS_OPT_POST_FIFO,&err);
 }
 
-
 void
 task_comm_send(void *p_arg)
 {
@@ -61,14 +60,7 @@ task_comm_send(void *p_arg)
 				msg->para1,
 				msg->para2,
 				msg->para3);
-		switch (msg->cmd_word)
-		{
-		case MOD_COMM_CMD_SEND_INT:
-			comm_IC_array_send((unsigned char*)msg,10);
-			break;
-		case MOD_COMM_CMD_BOARD_SEND_INT:
-			comm_board_IC_array_send((unsigned char*)msg,10);
-			break;
-		}
+		comm_IC_array_send((unsigned char*)msg,10);
+
 	}
 }

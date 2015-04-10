@@ -25,7 +25,7 @@ motor_task_init()
 				(CPU_CHAR	*)"Led Blink",
 				(OS_TASK_PTR)task_motor_move,
 				(void	*)0,
-				(OS_PRIO	)2,
+				(OS_PRIO	)3,
 				(CPU_STK	*)&Motor_Move_Stk[0],
 				(CPU_STK_SIZE)Motor_Move_Stk[256 / 10],
 				(CPU_STK_SIZE)256,
@@ -41,9 +41,11 @@ motor_task_init()
 				(CPU_CHAR	*)"Led Blink11",
 				(OS_TASK_PTR)task_motor_stop,
 				(void	*)0,
-				(OS_PRIO	)1,
+
+				(OS_PRIO	)2,
+
 				(CPU_STK	*)&Motor_Stop_Stk[0],
-				(CPU_STK_SIZE)Motor_Stop_Stk[256 / 10],
+				(CPU_STK_SIZE)Motor_Stop_Stk[64 / 10],
 				(CPU_STK_SIZE)64,
 				(OS_MSG_QTY	)0,
 				(OS_TICK	)0,
@@ -51,15 +53,16 @@ motor_task_init()
 				(OS_OPT)(OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR),
 				(OS_ERR *)&err
 				);
-
 }
+
+
 
 void
 motor_dispatch(void *msg)
 {
 	OS_ERR err;
-
-	switch ( (((CMD_STRU*)msg)->cmd_head) >> 8)
+	CMD_STRU* temp =(CMD_STRU*)msg;
+	switch ( (((CMD_STRU*)msg)->cmd_word)>>8)
 	{
 	case MOD_MOTOR_TASK_MOVE:
 		OSQPost(&MoveQ, msg, sizeof(unsigned short)*5, OS_OPT_POST_FIFO, &err);
@@ -94,7 +97,12 @@ task_motor_move(void *p_arg)
 	CMD_STRU *msg;
 	CMD_STRU *send_msg = (CMD_STRU*)malloc(sizeof(CMD_STRU));
 	unsigned short msg_send[6];
-	unsigned short data[2];
+	unsigned short report_data[3];
+
+	report_data[0] = 0;
+	report_data[1] = 0;
+	report_data[2] = 0;
+	long temp;
 
 	while (1)
 	{
@@ -103,64 +111,80 @@ task_motor_move(void *p_arg)
 		{
 		case MOD_MOTOR_CMD_SET_ORIGIN:
 			motor_origin_set();
-
-			data[0]=0x0000;
-			data[1]=0x0000;
-
 			break;
 
 		case MOD_MOTOR_CMD_STEP_FORWARD:
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, msg->para1, MOD_MOTOR_STATUS_MOVING);
+
 			motor_step_forward(msg->para1);
+
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING );
+			module_msg_dispatch(send_msg);
+
 			break;
 
 		case MOD_MOTOR_CMD_STEP_BACKWARD:
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+								MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_MOVING );
+			module_msg_dispatch(send_msg);
+
 			motor_step_backward(msg->para1);
+
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_BACKWARD, msg->para1, MOD_MOTOR_STATUS_STOPPING);
+			module_msg_dispatch(send_msg);
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_FORWARD:
-			while (motor_continue_check() == MOTOR_GOON)
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_FORWARD, 0, MOD_MOTOR_STATUS_MOVING);
+			module_msg_dispatch(send_msg);
+			temp = 0;
+			while (1)
 			{
 				motor_step_forward(MOTOR_SINGLE_STEP);
-				*(msg_send+4) = MOD_PID_HEAD;
-
+				temp++;
 				if (motor_check_stop()==MOTOR_STOP)
 				{
 					motor_reset_stop();
+					module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+							MOD_MOTOR_STATUS_FORWARD, temp, MOD_MOTOR_STATUS_STOPPING);
+					module_msg_dispatch(send_msg);
 					break;
 				}
-				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
 		case MOD_MOTOR_CMD_AUTO_BACKWARD:
-			motor_auto_backward();
-			while (motor_continue_check() == MOTOR_GOON)
+			motor_reset_stop();
+			module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+					MOD_MOTOR_STATUS_BACKWARD, 0, MOD_MOTOR_STATUS_MOVING);
+			module_msg_dispatch(send_msg);
+			temp =0;
+			while (1)
 			{
+				temp++;
 				motor_step_backward(MOTOR_SINGLE_STEP);
 				if (motor_check_stop()==MOTOR_STOP)
 				{
 					motor_reset_stop();
+					module_msg_render(send_msg, MOD_COMM_HEAD, MOD_MOTOR_HEAD,
+							MOD_MOTOR_STATUS_BACKWARD, temp, MOD_MOTOR_STATUS_STOPPING);
+					module_msg_dispatch(send_msg);
 					break;
 				}
-				for (int i=0;i<MOTOR_STEP_DELAY;i++);
 			}
 			break;
 
 		case MOD_MOTOR_CMD_ORIGINATE:
 			motor_originate();
-			int origin_point = motor_getorigin();
-			data[0] = origin_point;
-			if (origin_point>0)
-			{
-
-			}
-			else
-			{
-
-			}
-
 			break;
 		}
 	}
-
 }
+
