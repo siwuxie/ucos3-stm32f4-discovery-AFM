@@ -16,7 +16,7 @@ void comm_IC_init()
 	RCC_AHB1PeriphClockCmd(COMM_USART_PORT, ENABLE);
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 
@@ -48,7 +48,7 @@ void comm_IC_init()
 	RCC_AHB1PeriphClockCmd(COMM_BOARD_USART_PORT, ENABLE);
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 
@@ -71,6 +71,9 @@ void comm_IC_init()
 
     USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, ENABLE);
     NVIC_EnableIRQ(USART3_IRQn);
+
+    for (int i =0;i<COMM_RX_BUFF_SIZE;i++)
+    	rxbuff[i] = 0;
 
 }
 
@@ -105,53 +108,53 @@ USART2_IRQHandler(void)
 			rxbuff[rxbuff_count-1]=rxbuff[rxbuff_count-2];
 			rxbuff[rxbuff_count-2]=temp;
 		}
-		if (rxbuff_count == 8)
+		if (rxbuff_count == COMM_RX_BUFF_SIZE)
 		{
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, DISABLE);
-			module_msg_dispatch((unsigned short*)rxbuff);
+			module_msg_dispatch((CMD_STRU*)rxbuff);
 			rxbuff_count = 0;
 			USART_ITConfig(COMM_USART_s, USART_IT_RXNE, ENABLE);
 		}
 	}
 }
 
-void
-USART3_IRQHandler(void)
-{
-	if (USART_GetITStatus(COMM_BOARD_USART_s, USART_IT_RXNE) != RESET)
-	{
-		unsigned char c = USART_ReceiveData(COMM_BOARD_USART_s);
-		rxbuff_board[rxbuff_count_board]=c;
-		rxbuff_count_board++;
-		if ((rxbuff_count_board%2)==0)
-		{
-			unsigned char temp;
-			temp = rxbuff_board[rxbuff_count_board-1];
-			rxbuff_board[rxbuff_count_board-1]=rxbuff_board[rxbuff_count_board-2];
-			rxbuff_board[rxbuff_count_board-2]=temp;
-		}
-		if (rxbuff_count_board == 8)
-		{
-			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, DISABLE);
-			module_msg_dispatch((unsigned short*)rxbuff_board);
-			rxbuff_count_board = 0;
-			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, ENABLE);
-		}
-	}
-}
-
-void comm_board_IC_send(unsigned char data)
-{
-	while(USART_GetFlagStatus(COMM_BOARD_USART_s, USART_FLAG_TXE)==RESET);
-	USART_SendData(COMM_BOARD_USART_s, data);
-}
-
-void comm_board_IC_array_send(unsigned char* data, int len)
-{
-	int i=0;
-	while (i<len)
-	{
-		comm_board_IC_send(*(data+i));
-		i++;
-	}
-}
+//void
+//USART3_IRQHandler(void)
+//{
+//	if (USART_GetITStatus(COMM_BOARD_USART_s, USART_IT_RXNE) != RESET)
+//	{
+//		unsigned char c = USART_ReceiveData(COMM_BOARD_USART_s);
+//		rxbuff_board[rxbuff_count_board]=c;
+//		rxbuff_count_board++;
+//		if ((rxbuff_count_board%2)==0)
+//		{
+//			unsigned char temp;
+//			temp = rxbuff_board[rxbuff_count_board-1];
+//			rxbuff_board[rxbuff_count_board-1]=rxbuff_board[rxbuff_count_board-2];
+//			rxbuff_board[rxbuff_count_board-2]=temp;
+//		}
+//		if (rxbuff_count_board == 8)
+//		{
+//			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, DISABLE);
+//			module_msg_dispatch((CMD_STRU*)rxbuff_board);
+//			rxbuff_count_board = 0;
+//			USART_ITConfig(COMM_BOARD_USART_s, USART_IT_RXNE, ENABLE);
+//		}
+//	}
+//}
+//
+//void comm_board_IC_send(unsigned char data)
+//{
+//	while(USART_GetFlagStatus(COMM_BOARD_USART_s, USART_FLAG_TXE)==RESET);
+//	USART_SendData(COMM_BOARD_USART_s, data);
+//}
+//
+//void comm_board_IC_array_send(unsigned char* data, int len)
+//{
+//	int i=0;
+//	while (i<len)
+//	{
+//		comm_board_IC_send(*(data+i));
+//		i++;
+//	}
+//}

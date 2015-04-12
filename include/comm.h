@@ -5,7 +5,7 @@
  * Author: Liwen Zhang
  * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
  * =============================================================
- * 该头文件定义了AFM上下位机交互通信接口。
+ * 璇ュご鏂囦欢瀹氫箟浜咥FM涓婁笅浣嶆満浜や簰閫氫俊鎺ュ彛銆�
  */
 
 #include "stm32f4xx.h"
@@ -16,7 +16,7 @@
 #define COMM_USART_TX					GPIO_Pin_2
 #define COMM_USART_RX					GPIO_Pin_3
 
-#define COMM_RX_BUFF_SIZE				8
+#define COMM_RX_BUFF_SIZE				10
 #define COMM_CMD_WORD_SIZE				4
 #define COMM_EXCUTOR_LIST_SIZE 			20
 
