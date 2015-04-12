@@ -1,7 +1,7 @@
 #include "motor.h"
 
 
-int motor_origin_point;
+short motor_origin_point;
 int motor_stop_flag;
 
 void motor_init()
@@ -9,6 +9,15 @@ void motor_init()
 	motor_IC_init();
 	motor_origin_point = 0;
 }
+
+int motor_directions()
+{
+	if (motor_origin_point>0)
+		return(1);
+	else
+		return(0);
+}
+
 
 void motor_auto_forward()
 {
@@ -43,6 +52,7 @@ void motor_step_forward(int step)
 		temp--;
 	}
 	motor_IC_sleep();
+	motor_origin_point += step;
 }
 
 void motor_step_backward(int step)
@@ -56,6 +66,7 @@ void motor_step_backward(int step)
 		temp--;
 	}
 	motor_IC_sleep();
+	motor_origin_point -=step;
 }
 
 void motor_origin_set()
@@ -65,6 +76,7 @@ void motor_origin_set()
 	 * need informations
 	 */
 }
+
 
 void motor_originate()
 {
@@ -76,6 +88,7 @@ void motor_originate()
 	{
 		motor_step_forward(motor_origin_point);
 	}
+	motor_origin_set();
 	/*
 	 * need informations
 	 */
@@ -105,7 +118,7 @@ short motor_continue_check()
 	return MOTOR_GOON;
 }
 
-int motor_getorigin()
-{
-	return motor_origin_point;
-}
+//short motor_getorigin()
+//{
+//	return motor_origin_point;
+//}

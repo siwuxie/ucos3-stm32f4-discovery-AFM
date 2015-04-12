@@ -5,8 +5,6 @@
  * Author: Liwen Zhang
  * Email: Scott.zhangliwen@gmail.com/chadkidzhang@126.com
  * ===========================================================
- * 璇ュご鏂囦欢瀹氫箟浜嗗祵鍏ュ紡绯荤粺鑷姩杞藉叆鍚勪釜妯″潡鐨勬帴鍙ｃ�璇ユ枃浠跺彲浠�
- * 瑙嗕负OS鐨勪竴閮ㄥ垎
  */
 
 #include "includes.h"
@@ -33,7 +31,7 @@
 struct module_stru
 {
 	unsigned short module_head;
-	void (*dispatch)(unsigned short *msg);
+	void (*dispatch)(void *msg);
 	void (*taks_init[MODULE_MAX_TASKS])();
 	int  count_tasks;
 	unsigned char priors[MODULE_MAX_TASKS];

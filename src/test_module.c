@@ -22,11 +22,12 @@ void task_led_blink(void *p_arg)
 	temp=MOD_TEST_CMD_BLINK;
 
 	OS_ERR err;
-	MSG_STRU *msg;
+	MSG_STRU *msg = (MSG_STRU*)malloc(sizeof(MSG_STRU));
 	msg->para1 = 1;
 	msg->para2 = 1;
 	msg->para3 = 1;
 	msg->para4 = 1;
+	msg->para5 = 1;
 
 	OSQPost(&BlinkQ, &temp, sizeof(unsigned short), OS_OPT_POST_FIFO, &err);
 
@@ -42,21 +43,21 @@ void task_led_blink(void *p_arg)
 			for (long i=0;i<220000;i++);
 			module_msg_render(msg,
 						MOD_TEST_HEAD,
-						MOD_TEST_TASK_BLINK<<8 + MOD_TEST_CMD_SET_BLINK,
+						((MOD_TEST_TASK_BLINK<<8) + MOD_TEST_CMD_SET_BLINK),
 						0x0000,
 						0x0000,
 						0x0000);
-			module_msg_dispatch(msg);
+			module_msg_dispatch((CMD_STRU*)msg);
 		}
 		else if (*cmd == MOD_TEST_CMD_SET_BLINK)
 		{
 			module_msg_render(msg,
 					MOD_TEST_HEAD,
-					MOD_TEST_TASK_BLINK<<8 + MOD_TEST_CMD_BLINK,
+					((MOD_TEST_TASK_BLINK << 8) + MOD_TEST_CMD_BLINK),
 					0x0000,
 					0x0000,
 					0x0000);
-			module_msg_dispatch(msg);
+			module_msg_dispatch((CMD_STRU*)msg);
 		}
 	}
 }
@@ -80,7 +81,7 @@ void test_task_init()
 				(CPU_CHAR	*)"Led Blink",
 				(OS_TASK_PTR)task_led_blink,
 				(void	*)0,
-				(OS_PRIO	)10,
+				(OS_PRIO	)9,
 				(CPU_STK	*)&Test_led_blink_STK[0],
 				(CPU_STK_SIZE)Test_led_blink_STK[256 / 10],
 				(CPU_STK_SIZE)256,

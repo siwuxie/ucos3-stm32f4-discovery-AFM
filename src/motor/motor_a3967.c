@@ -27,8 +27,9 @@ void motor_IC_one_step()
 {
 	static unsigned char i = 0;
 	GPIO_SetBits(MOTOR_PORT_s, MOTOR_SQUARE);
-	for (int i=0;i<MOTOR_STEP_DELAY;i++);
+	for (long i=0;i<MOTOR_STEP_DELAY;i++);
 	GPIO_ResetBits(MOTOR_PORT_s, MOTOR_SQUARE);
+	for (long i=0;i<MOTOR_STEP_DELAY;i++);
 }
 
 void motor_IC_dir(int dir)
