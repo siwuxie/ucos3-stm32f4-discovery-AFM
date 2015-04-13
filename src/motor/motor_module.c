@@ -96,12 +96,6 @@ task_motor_move(void *p_arg)
 	CPU_TS ts;
 	CMD_STRU *msg;
 	CMD_STRU *send_msg = (CMD_STRU*)malloc(sizeof(CMD_STRU));
-	unsigned short msg_send[6];
-	unsigned short report_data[3];
-
-	report_data[0] = 0;
-	report_data[1] = 0;
-	report_data[2] = 0;
 	long temp;
 
 	while (1)

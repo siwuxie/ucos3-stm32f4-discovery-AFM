@@ -1,5 +1,7 @@
 #include "pid_closeloop_modul.h"
 
+CPU_INT32U enable_flag = 0;
+
 void
 pid_module_init()
 {
@@ -55,10 +57,10 @@ pid_task_init()
 }
 
 void
-pid_dispatch(unsigned short *msg)
+pid_dispatch(void *msg)
 {
 	OS_ERR err;
-	unsigned short temp_task = *(msg+1)>>8;
+	unsigned short temp_task = ((CMD_STRU*)msg)->cmd_word>>8;
 	switch (temp_task)
 	{
 	case MOD_PID_TASK_SET:
@@ -67,97 +69,51 @@ pid_dispatch(unsigned short *msg)
 }
 
 void
-pid_render(unsigned short *data, unsigned short des_head, unsigned short des_word, unsigned short ori_task_interface, unsigned short *msg)
-{
-	*msg = des_head;
-	*(msg+1) = des_word;
-	*(msg+2) = *data;
-	*(msg+3) = *(data+1);
-	*(msg+4) = MOD_PID_HEAD;
-	*(msg+5) = ori_task_interface;
-}
-
-void
 task_pid_set(void *p_arg)
 {
 	OS_ERR err;
 	OS_MSG_SIZE size;
 	CPU_TS ts;
-	char dispatch_flag = 0;
 
-	unsigned short *msg, msg_send[6], data[2];
+	CMD_STRU *msg;
+	CMD_STRU *send_msg = (CMD_STRU*)malloc(sizeof(CMD_STRU));
+
 	while (1)
 	{
-		msg = OSQPend(&SETQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
-		switch (*msg)
+
+		msg =(CMD_STRU*) OSQPend(&SETQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
+		switch (msg->cmd_word & 0x00ff)
 		{
+		case MOD_PID_CMD_ENABLE:
+			enable_flag  = 1;
+			break;
+
+		case MOD_PID_CMD_DISABLE:
+			enable_flag = 0;
+			break;
+
 		case MOD_PID_CMD_SETD:
-			pid_setd((double)(*(msg+2))+(double)*((msg+1)));
-			data[0] = 0x0000;
-			data[1] = 0x0001;
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_SETD, msg_send);
-			dispatch_flag = 1;
+			pid_setd(msg->para1/10+msg->para2/100.0);
 			break;
+
 		case MOD_PID_CMD_SETI:
-			pid_seti((double)(*(msg+2))+(double)*((msg+1)));
-			data[0] = *(msg+1);
-			data[1] = *(msg+2);
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_SETI, msg_send);
-			dispatch_flag = 1;
+			pid_seti(msg->para1/10+msg->para2/100.0);
 			break;
+
 		case MOD_PID_CMD_SETP:
-			pid_setp((double)(*(msg+2))+(double)*((msg+1)));
-			data[0] = *(msg+1);
-			data[1] = *(msg+2);
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_SETP, msg_send);
-			dispatch_flag =1;
+			pid_setp(msg->para1/10+msg->para2/100.0);
 			break;
+
 		case MOD_PID_CMD_SETDELAY:
-			pid_setdelay(*(msg+1)+*(msg+2));
-			data[0] = *(msg+1);
-			data[1] = *(msg+2);
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_SETDELAY, msg_send);
-			dispatch_flag = 1;
+			pid_setdelay(msg->para1);
 			break;
+
 		case MOD_PID_CMD_SETPOINT:
-			pid_setsetpoint(*(msg+1)+*(msg+2));
-			data[0] = *(msg+1);
-			data[1] = *(msg+2);
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET <<8) + MOD_PID_CMD_SETPOINT, msg_send);
-			dispatch_flag = 1;
+			pid_setsetpoint(msg->para1);
 			break;
-		case MOD_PID_CMD_ASK_REPORT_ERR:
-			pid_report_err(data);
-			data[1]=0;
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET << 8) + MOD_PID_CMD_ASK_REPORT_ERR, msg_send);
-			dispatch_flag = 1;
-			break;
-		case MOD_PID_CMD_ASK_REPORT_Z:
-			pid_report_z(data+1);
-			data[0] = 0;
-			pid_render(data,MOD_COMM_HEAD,(MOD_COMM_TASK_SEND<<8) + MOD_COMM_CMD_SEND_INT,
-					   (MOD_PID_TASK_SET<<8) + MOD_PID_CMD_ASK_REPORT_Z, msg_send);
-			dispatch_flag = 1;
-			break;
+
 		case MOD_PID_CMD_MOTOR_STOP:
-//			if (pid_setpoint == pid_z)
-			{
-//				pid_render(data, MOD_COMM_HEAD, (MOD_COMM_TASK_SEND <<8)+ MOD_COMM_CMD_BOARD_SEND_INT,
-//						(MOD_MOTOR_TASK_MOVE<<8) + MOD_MOTOR_CMD_STOP, msg_send);
-				msg_send[4] = MOD_MOTOR_HEAD;
-				dispatch_flag = 1;
-			}
-		}
-		if (dispatch_flag)
-		{
-			module_msg_dispatch(msg_send);
-			dispatch_flag = 0;
+			break;
 		}
 	}
 }
@@ -168,7 +124,10 @@ task_pid_run(void *p_arg)
 	unsigned short signal;
 	while (1)
 	{
-		pid_value_signal(&signal);
-		pid_handler(signal);
+		if (enable_flag)
+		{
+			pid_value_signal(&signal);
+			pid_handler(signal);
+		}
 	}
 }
