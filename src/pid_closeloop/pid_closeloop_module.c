@@ -20,7 +20,8 @@ void
 pid_task_init()
 {
 	OS_ERR err;
-	OSQCreate(&SETQ, "setQ", 10, &err);
+	OSQCreate(&SETQ, "setQ", 100, &err);
+	OSQCreate(&REQUESTQ,'requestQ', 100, &err);
 
 	OSTaskCreate(
 				(OS_TCB	*)&Pid_Run_TCB,
@@ -54,6 +55,22 @@ pid_task_init()
 				(OS_ERR *)&err
 				);
 
+	OSTaskCreate(
+				(OS_TCB	*)&Pid_Request_TCB,
+				(CPU_CHAR	*)"pid set",
+				(OS_TASK_PTR)task_pid_request,
+				(void	*)0,
+				(OS_PRIO	)1,
+				(CPU_STK	*)&Pid_Request_Stk[0],
+				(CPU_STK_SIZE)Pid_Request_Stk[64 / 10],
+				(CPU_STK_SIZE)64,
+				(OS_MSG_QTY	)0,
+				(OS_TICK	)0,
+				(void	*)0,
+				(OS_OPT)(OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR),
+				(OS_ERR *)&err
+				);
+
 }
 
 void
@@ -65,6 +82,32 @@ pid_dispatch(void *msg)
 	{
 	case MOD_PID_TASK_SET:
 		OSQPost(&SETQ,msg+1, sizeof(unsigned short)*3, OS_OPT_POST_FIFO, &err);
+	}
+}
+
+void
+task_pid_request(void *p_arg)
+{
+	OS_ERR err;
+	OS_MSG_SIZE size;
+	CPU_TS ts;
+
+	CMD_STRU *msg;
+	CMD_STRU *send_msg=(CMD_STRU*)malloc(sizeof(CMD_STRU));
+
+	while (1)
+	{
+		msg = (CMD_STRU*)OSQPend(&REQUESTQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
+		switch(msg->cmd_word & 0x00ff)
+		{
+		case MOD_PID_REQUEST_Z:
+			// send messages to the model where the request came from.
+			break;
+		case MOD_PID_REQUEST_ERR:
+			break;
+		case MOD_PID_REQUEST_INT:
+			break;
+		}
 	}
 }
 

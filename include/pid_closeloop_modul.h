@@ -18,6 +18,7 @@
 
 #define MOD_PID_TASK_SET												0x00
 #define MOD_PID_TASK_RUN											0x01
+#define MOD_PID_TASK_REQUEST									0x02
 
 #define MOD_PID_CMD_ENABLE										0x00
 #define MOD_PID_CMD_SETP											0x01
@@ -34,14 +35,20 @@
 #define MOD_PID_REPORT_ERR										0x01
 #define MOD_PID_REPORT_INT										0x02
 
+#define MOD_PID_REQUEST_Z											0x00
+#define MOD_PID_REQUEST_ERR										0x01
+#define MOD_PID_REQUEST_INT										0x03
+
 
 OS_Q SETQ;
+OS_Q REQUESTQ;
 
- OS_TCB Pid_Set_TCB, Pid_Run_TCB;
- CPU_STK Pid_Set_Stk[64], Pid_Run_Stk[1024];
+ OS_TCB Pid_Set_TCB, Pid_Run_TCB, Pid_Request_TCB;
+ CPU_STK Pid_Set_Stk[64], Pid_Run_Stk[1024], Pid_Request_Stk[64];
 
 void task_pid_set(void *p_arg);
 void task_pid_run(void *p_arg);
+void task_pid_request(void *p_arg);
 
 void pid_module_init();
 void pid_task_init();
