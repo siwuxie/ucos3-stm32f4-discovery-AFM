@@ -19,12 +19,19 @@ typedef enum
 	SCAN_Y=SCAN_OUTPUT_Y
 }SCAN_DIR;
 
-extern void scan_init(void);
-extern void scan_ic_output(SCAN_DIR dir,uint16_t value);
-extern void inc_x();
-extern void inc_y();
-extern void set_inc(uint32_t inc_x,uint32_t inc_y);
-extern void set_x(uint16_t value);
-extern void set_y(uint16_t value);
+void scan_init(void);
+void scan_ic_output(SCAN_DIR dir,uint16_t value);
+
+void inc_x();
+void inc_y();
+
+void set_inc(uint32_t inc_x,uint32_t inc_y);
+
+void set_x(uint16_t value);
+void set_y(uint16_t value);
+
+void scan_gpio_config(void);
+void scan_dac_config(void);
+
 
 #endif
