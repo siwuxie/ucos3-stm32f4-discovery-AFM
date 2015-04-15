@@ -9,10 +9,6 @@ void scan_init()
 {
 	scan_IC_init();
 }
-inline void scan_handler(int32_t signal)
-{
-
-}
 
 void inc_x()
 {

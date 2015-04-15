@@ -52,12 +52,28 @@ void task_scan(void *p_arg)
 	OS_ERR err;
 	OS_MSG_SIZE size;
 	CPU_TS ts;
-	unsigned short *msg;
-	unsigned short msg_send[6];
-	unsigned short data[2];
+	CMD_STRU *msg;
 
 	while (1)
 	{
+		msg = (CMD_STRU*)OSQPend(&ScanQ, 0, OS_OPT_PEND_BLOCKING, &size, &ts, &err);
+		switch (msg->cmd_word & 0x00ff)
+		{
+		case MOD_SCAN_CMD_SET_INC:
+			break;
+		case MOD_SCAN_CMD_SET_X:
+			break;
+		case MOD_SCAN_CMD_SET_Y:
+			break;
+		case MOD_SCAN_CMD_INC_X:
+			break;
+		case MOD_SCAN_CMD_INC_Y:
+			break;
+		case MOD_SCAN_CMD_DEC_X:
+			break;
+		case MOD_SCAN_CMD_DEC_Y:
+			break;
+		}
 	}
 
 }

@@ -1,5 +1,3 @@
-
-
 #include "module.h"
 #include "scan_control.h"
 
